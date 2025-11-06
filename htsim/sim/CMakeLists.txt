@@ -76,6 +76,8 @@ set(SOURCE_FILES
     fairpullqueue.cpp
     hpcc.cpp
     hpccpacket.cpp
+    mcc.cpp
+    mccpacket.cpp
     logfile.cpp
     loggers.cpp
     meter.cpp

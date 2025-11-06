@@ -66,6 +66,12 @@ class HPCCTrafficLogger : public TrafficLogger {
     static string event_to_str(RawLogEvent& event);
 };
 
+class MCCTrafficLogger : public TrafficLogger {
+ public:
+    void logTraffic(Packet& pkt, Logged& location, TrafficEvent ev);
+    static string event_to_str(RawLogEvent& event);
+};
+
 class TcpLoggerSimple : public TcpLogger {
  public:
     virtual void logTcp(TcpSrc &tcp, TcpEvent ev);
@@ -279,6 +285,13 @@ class HPCCSinkLoggerSampling : public SinkLoggerSampling {
     static string event_to_str(RawLogEvent& event);
 };
 
+class MCCSinkLoggerSampling : public SinkLoggerSampling {
+    virtual void doNextEvent();
+    bool isTraffic() { return false;};
+ public:
+    MCCSinkLoggerSampling(simtime_picosec period, EventList& eventlist);
+    static string event_to_str(RawLogEvent& event);
+};
 
 class MemoryLoggerSampling : public Logger, public EventSource {
  public:

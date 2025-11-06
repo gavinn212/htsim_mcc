@@ -222,6 +222,8 @@ int main(int argc, char** argv){
         TYPE = 41; EV = 4100;
     } else if (argc>2&&!strcmp(argv[2], "-hpcc")) {
         TYPE = 28; EV = 2800;
+    } else if (argc>2&&!strcmp(argv[2], "-mcc")) {
+        TYPE = 37; EV = 3700;
     } else if (argc>2&&!strcmp(argv[2], "-swift")) {
         TYPE = 23; EV = 2300;
     } else if (argc>2&&!strcmp(argv[2], "-mptcp")) {
@@ -286,6 +288,9 @@ int main(int argc, char** argv){
             case Logger::HPCC_TRAFFIC: //10
                 out = HPCCTrafficLogger::event_to_str(event);
                 break;
+            case Logger::MCC_TRAFFIC: //36
+                out = MCCTrafficLogger::event_to_str(event);
+                break;
             case Logger::TCP_SINK: //11
                 out = TcpSinkLoggerSampling::event_to_str(event);
                 break;
@@ -339,6 +344,9 @@ int main(int argc, char** argv){
                 break;                                
             case Logger::HPCC_SINK: //18
                 out = HPCCSinkLoggerSampling::event_to_str(event);
+                break;
+            case Logger::MCC_SINK: //37
+                out = MCCSinkLoggerSampling::event_to_str(event);
                 break;                
             case Logger::SWIFT_EVENT: //20
             case Logger::SWIFT_STATE: //21

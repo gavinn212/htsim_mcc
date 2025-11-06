@@ -16,6 +16,7 @@ class BaseQueue;
 class QcnReactor;
 class RoceSrc;
 class HPCCSrc;
+class MCCSrc;
 class QcnQueue;
 class MultipathTcpSrc;
 class Logfile;
@@ -67,6 +68,7 @@ class Logger {
                      STRACK_EVENT=29, STRACK_STATE=30, STRACK_TRAFFIC=31,
                      STRACK_SINK=32, STRACK_MEMORY=33,
                      DCQCN_TRAFFIC=34, DCQCN_SINK=35,
+                     MCC_TRAFFIC=36, MCC_SINK=37,
                      EQDS_EVENT=38, EQDS_STATE=39, EQDS_RECORD=40,
                      EQDS_SINK = 41, EQDS_MEMORY = 42, EQDS_TRAFFIC = 43,
                      UEC_EVENT=44, UEC_STATE=45, UEC_RECORD=46,
@@ -196,6 +198,18 @@ class HPCCLogger  : public Logger {
 
     virtual void logHPCC(HPCCSrc &src, HPCCEvent ev) =0;
     virtual ~HPCCLogger(){};
+};
+
+class MCCLogger  : public Logger {
+ public:
+    enum MCCEvent { MCC_RCV=0, MCC_TIMEOUT=1 };
+    enum MCCState { MCCSTATE_ON=1, MCCSTATE_OFF=0 };
+    enum MCCRecord { AVE_RATE=0 };
+    enum MCCSinkRecord { RATE = 0 };
+    enum MCCMemoryRecord  {MEMORY = 0};
+
+    virtual void logMCC(MCCSrc &src, MCCEvent ev) =0;
+    virtual ~MCCLogger(){};
 };
 
 class NdpTunnelLogger  : public Logger {

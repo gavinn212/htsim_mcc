@@ -38,6 +38,9 @@ set_property(TARGET htsim_swift PROPERTY EXCLUDE_FROM_ALL TRUE)
 add_executable(htsim_hpcc main_hpcc.cpp)
 set_property(TARGET htsim_hpcc PROPERTY EXCLUDE_FROM_ALL TRUE)
 
+add_executable(htsim_mcc main_mcc.cpp)
+set_property(TARGET htsim_mcc PROPERTY EXCLUDE_FROM_ALL TRUE)
+
 add_executable(htsim_eqds main_eqds.cpp)
 set_property(TARGET htsim_eqds PROPERTY EXCLUDE_FROM_ALL TRUE)
 
@@ -52,6 +55,7 @@ set (ALL_EXECUTABLES
     htsim_roce
     htsim_swift
     htsim_hpcc
+    htsim_mcc
     htsim_eqds
     htsim_uec
 )

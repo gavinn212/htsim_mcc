@@ -48,6 +48,7 @@ typedef enum {IP, TCP, TCPACK, TCPNACK, SWIFT, SWIFTACK, STRACK, STRACKACK,
               ETH_PAUSE, TOFINO_TRIM,
               ROCE, ROCEACK, ROCENACK,
               HPCC, HPCCACK, HPCCNACK,
+              MCC, MCCACK, MCCNACK,
               CNP,
               EQDSDATA, EQDSPULL, EQDSACK, EQDSNACK, EQDSRTS,
               UECDATA, UECPULL, UECACK, UECNACK, UECRTS} packet_type;
