@@ -140,4 +140,270 @@ cmake --build build --parallel # To build the project
 cd build
 ctest
 ```
+# Gavin's Additional Note
 
+### First use 
+```
+cd htsim/sim
+
+# 配置CMake项目
+cmake -S . -B build
+
+# 编译项目（使用并行编译）(这个可能会只编译uet，暂时使用下面替代)
+cmake --build build --parallel
+
+# 编译特定目标
+cmake --build build --target htsim_mcc
+
+#编译parser
+cmake --build build --target parse_output
+```
+编译完成后，可执行文件位于：
+build/datacenter/htsim_mcc
+htsim/sim/datacenter/htsim_mcc（符号链接）
+
+
+### 基本运行
+```
+cd htsim/sim/datacenter
+
+# 使用默认参数运行
+./htsim_mcc -nodes 432 -strat ecmp_host -tm connection_matrices/one.cm -end 1000000
+
+# 或者使用标准输入
+./htsim_mcc -nodes 432 -strat ecmp_host -end 1000000 < connection_matrices/one.cm
+
+#直接测试运行
+./htsim_mcc 
+```
+
+### 基本运行 new
+```
+./htsim_mcc \
+    -nodes 432 \
+    -strat ecmp_host \
+    -paths 1 \
+    -tm connection_matrices/one.cm \
+    -end 1000000 \
+    -mcc_alpha 0.5 \
+    -mcc_beta 0.3
+```
+
+### 生成合法Log
+```
+./htsim_mcc     -nodes 16     -strat ecmp_host     -paths 1     -tm connection_matrices/incast.cm     -end 500000     -mcc_alpha 0.5     -mcc_beta 0.3     -log sink     -log traffic     -o output.dat
+```
+
+### 使用 MCC 特定参数
+```
+# 设置MCC参数：alpha（协作因子）和beta（平滑因子）
+./htsim_mcc \
+    -nodes 432 \
+    -strat ecmp_host \
+    -tm connection_matrices/one.cm \
+    -end 1000000 \
+    -mcc_alpha 0.5 \
+    -mcc_beta 0.3 \
+    -o mcc_output.dat
+```
+
+### 完整参数示例
+```
+./htsim_mcc \
+    -nodes 432 \
+    -strat ecmp_host \
+    -tm connection_matrices/perm_32n_32c_2MB.cm \
+    -end 10000000 \
+    -q 15 \
+    -queue_type lossless_input \
+    -host_queue_type fair_prio \
+    -mcc_alpha 0.5 \
+    -mcc_beta 0.3 \
+    -log sink \
+    -log traffic \
+    -o mcc_results.dat \
+    -seed 42 \
+    -mtu 9000 \
+    -hop_latency 1 \
+    -switch_latency 0 \
+    -pfc_thresholds 12 15
+```
+
+### 完整参数示例 new
+```
+./htsim_mcc \
+    -nodes 432 \
+    -strat ecmp_host \
+    -paths 1 \
+    -tm connection_matrices/perm_32n_32c_2MB.cm \
+    -end 10000000 \
+    -mcc_alpha 0.5 \
+    -mcc_beta 0.3 \
+    -q 15 \
+    -queue_type lossless_input \
+    -log sink \
+    -log traffic \
+    -o mcc_output.dat \
+    -seed 42
+```
+
+可用的连接矩阵文件位于 htsim/sim/datacenter/connection_matrices/：
+- one.cm: 单连接
+- perm_32n_32c_2MB.cm: 32节点排列
+- incast_128.cm: 128节点incast模式
+- etc.
+
+### 其他实用命令
+```
+cd '/mnt/c/Users/gavin/OneDrive/Desktop/Courses/ECE 6383 High-Speed Networks/uet-htsim/htsim/sim/datacenter' 
+
+./htsim_mcc -nodes 2 -strat ecmp_host -paths 1 -tm connection_matrices/one.cm -end 10000 -mcc_alpha 0.5 -mcc_beta 0.3
+```
+
+OUTPUT:
+```
+no_of_nodes 2
+no of paths 1
+traffic matrix input file: connection_matrices/one.cm
+endtime(us) 10000
+MCC alpha (cooperation factor) set to 0.5
+MCC beta (smoothing factor) set to 0.3
+Parsed args
+Logging to logout.dat
+HPCCSinkLoggerSampling(p=0.00025 init 
+Tier 0 QueueSize Down 135000 bytes
+Tier 0 QueueSize Up 135000 bytes
+Tier 1 QueueSize Down 135000 bytes
+Tier 1 QueueSize Up 135000 bytes
+Tier 2 QueueSize Down 135000 bytes
+Fat Tree topology (0) with 1us links and 0us switching latency for 6us diameter latency.
+Set params 2
+Tier 0 QueueSize Down 135000 bytes
+Tier 0 QueueSize Up 135000 bytes
+Tier 1 QueueSize Down 135000 bytes
+Tier 1 QueueSize Up 135000 bytes
+Tier 2 QueueSize Down 135000 bytes
+_no_of_nodes 2
+K 2
+Queue type 8
+Loading connection matrix from  connection_matrices/one.cm
+Nodes: 16 Connections: 1 Triggers: 0 Failures: 0
+Error: unknown id: 
+ at line 4
+
+```
+
+
+```
+cd '/mnt/c/Users/gavin/OneDrive/Desktop/Courses/ECE 6383 High-Speed Networks/uet-htsim/htsim/sim/datacenter' 
+
+echo -e 'Nodes 16\nConnections 1\n0->13 start 0 size 2000000' | ./htsim_mcc -nodes 16 -strat ecmp_host -paths 1 -end 100000 -mcc_alpha 0.5 -mcc_beta 0.3 -log sink -log traffic -o mcc_test_output.dat 2>&1 | tail -15
+```
+OUTPUT
+```
+CWND2 3012000 ACKNO 1908000 at 174.458 src MCCsrc 0
+CWND2 3025500 ACKNO 1917000 at 175.183 src MCCsrc 0
+CWND2 3039000 ACKNO 1926000 at 175.908 src MCCsrc 0
+CWND2 3052500 ACKNO 1935000 at 176.633 src MCCsrc 0
+CWND2 3066000 ACKNO 1944000 at 177.358 src MCCsrc 0
+CWND2 3079500 ACKNO 1953000 at 178.083 src MCCsrc 0
+CWND2 3093000 ACKNO 1962000 at 178.808 src MCCsrc 0
+CWND2 3106500 ACKNO 1971000 at 179.533 src MCCsrc 0
+CWND2 3120000 ACKNO 1980000 at 180.259 src MCCsrc 0
+CWND2 3133500 ACKNO 1989000 at 180.984 src MCCsrc 0
+CWND2 3147000 ACKNO 1998000 at 181.709 src MCCsrc 0
+```
+
+
+```
+cd '/mnt/c/Users/gavin/OneDrive/Desktop/Courses/ECE 6383 High-Speed Networks/uet-htsim/htsim/sim/datacenter'
+strings mcc_test_output.dat | head -20
+```
+
+OUTPUT
+```
+: MCC_0_13=396
+: MCC_sink_0_13=398
+# pktsize=9000 bytes
+# hostnicrate = 100000 Mbps
+# mcc_alpha=0.5
+# mcc_beta=0.3
+# rtt =1e-06
+# numrecords=2
+# transpose=0
+# TRACE
+Mb0?%
+```
+
+
+
+
+
+
+
+### Draft running teamplate (old one, may not work)
+
+```
+# 基本运行
+./main_hpcc -nodes 432 -strat ecmp_host -tm traffic.txt -end 1000000
+
+# 启用自适应路由
+./main_hpcc -nodes 432 -strat ecmp_ar -ar_method pqb -tm traffic.txt
+
+# 启用详细日志
+./main_hpcc -nodes 432 -strat ecmp_host -log sink -log traffic -o output.log
+
+# 自定义测试样例
+./main_mcc -nodes 432 -strat ecmp_host -tm traffic.txt -end 1000000 -mcc_alpha 0.5 -mcc_beta 0.3
+```
+
+### 参数说明
+MCC 特定参数：
+- mcc_alpha <value>: MCC 协作因子（默认 0.5），用于拥塞窗口计算
+- mcc_beta <value>: MCC 平滑因子（默认 0.3），用于链路利用率平滑
+
+其他常用参数：
+- nodes N: 节点数量（默认 432）
+- strat <strategy>: 路由策略（ecmp_host, ecmp_ar, single 等）
+- tm <file>: 流量矩阵文件
+- end <time>: 仿真结束时间（微秒）
+- q <size>: 队列大小
+- o <file>: 输出日志文件名
+- log sink: 启用sink日志
+- log traffic: 启用流量日志
+
+### 故障排除
+如果编译失败：
+确认已安装 CMake 和 C++ 编译器（g++ 或 clang）
+清理并重新编译：
+```
+   rm -rf build
+   cmake -S . -B build
+   cmake --build build --parallel
+```
+如果运行时出错：
+- 检查参数是否正确
+- 确认连接矩阵文件存在
+- 查看错误信息中的具体提示
+
+
+
+
+
+
+
+### File Description
+已创建的文件
+`htsim/sim/mccpacket.h` - MCC 数据包定义（MCCPacket、MCCAck、MCCNack
+
+`htsim/sim/mccpacket.cpp` - MCC 数据包实现
+htsim/sim/mcc.h - MCC 源和接收器头文件
+
+`htsim/sim/mcc.cpp` - MCC 协议实现
+
+`htsim/sim/datacenter/main_mcc.cpp` - MCC 主程序文件
+
+# 主要修改
+1. 在网络包类型中添加了 MCC、MCCACK、MCCNACK
+2. 在 loggertypes.h 中添加了 MCCLogger 类定义
+3. 在 loggertypes.h 中添加了 MCCSrc 前向声明

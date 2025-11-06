@@ -36,3 +36,15 @@ UEC's htsim is not:
 # Getting Started
 
 Check the [README](htsim/README.md) file in the `htsim/` folder.
+
+
+cd htsim/sim
+
+# 配置CMake项目
+cmake -S . -B build
+
+# 编译项目（使用并行编译）
+cmake --build build --parallel
+
+# 或者编译特定目标
+cmake --build build --target htsim_mcc
