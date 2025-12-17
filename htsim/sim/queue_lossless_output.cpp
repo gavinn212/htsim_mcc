@@ -4,6 +4,7 @@
 #include <sstream>
 #include "switch.h"
 #include "hpccpacket.h"
+#include "hpccpluspluspacket.h"
 #include "queue_lossless_output.h"
 #include "queue_lossless_input.h"
 
@@ -123,8 +124,26 @@ void LosslessOutputQueue::completeService(){
         pkt->set_flags(pkt->flags() | ECN_CE); 
 
     if (pkt->type()==HPCC){
-        //HPPC INT information adding to packet
+        //HPCC INT information adding to packet
         HPCCPacket* h = dynamic_cast<HPCCPacket*>(pkt);
+        assert(h->_int_hop<5);
+
+        h->_int_info[h->_int_hop]._queuesize = _queuesize;
+        h->_int_info[h->_int_hop]._ts = eventlist().now();
+
+        if (_switch){
+            h->_int_info[h->_int_hop]._switchID = _switch->getID();
+            h->_int_info[h->_int_hop]._type = _switch->getType();
+        }
+
+        h->_int_info[h->_int_hop]._txbytes = _txbytes;
+        h->_int_info[h->_int_hop]._linkrate = _bitrate;
+
+        h->_int_hop++;
+    }
+    else if (pkt->type()==HPCCPP){
+        //HPCC++ INT information adding to packet
+        HPCCPPPacket* h = dynamic_cast<HPCCPPPacket*>(pkt);
         assert(h->_int_hop<5);
 
         h->_int_info[h->_int_hop]._queuesize = _queuesize;

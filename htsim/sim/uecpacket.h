@@ -70,6 +70,36 @@ public:
 
         return p;
     }
+
+    // Routeless constructor for control/probe packets created before port selection.
+    inline static UecDataPacket* newpkt(PacketFlow &flow,
+                                         seq_t epsn, mem_b full_size,
+                                         PacketType pkttype, pull_quanta pull_target,
+                                         uint32_t destination = UINT32_MAX) {
+        UecDataPacket* p = _packetdb.allocPacket();
+        p->set_attrs(flow, full_size, epsn);
+        p->_type = UECDATA;
+        p->_is_header = false;
+        p->_bounced = false;
+        p->_epsn = epsn;
+        p->_packet_type = pkttype;
+
+        p->_eqsrcid = 0;
+        p->_eqtgtid = 0;
+
+        p->_pull_target = pull_target;
+        p->_syn = false;
+        p->_fin = false;
+
+        p->_ar = false;
+        p->set_dst(destination);
+
+        p->_direction = NONE;
+        p->_path_len = 0;
+        p->_trim_hop = {};
+        p->_trim_direction = NONE;
+        return p;
+    }
   
     virtual inline void strip_payload(uint16_t trim_size = ACKSIZE) {
         Packet::strip_payload(trim_size); 

@@ -941,7 +941,6 @@ void UecSrc::processAck(const UecAckPacket& pkt) {
     auto rtx_time = _rtx_times.find(acked_psn);
     uint32_t ooo = pkt.ooo();
 
-    mem_b pkt_size;
     simtime_picosec delay;
     simtime_picosec raw_rtt = 0;
     simtime_picosec send_time = 0;
@@ -961,7 +960,6 @@ void UecSrc::processAck(const UecAckPacket& pkt) {
         }
         //auto seqno = i->first;
         send_time = i->second.send_time;
-        pkt_size = i->second.pkt_size;
         raw_rtt = eventlist().now() - send_time;
 
         if (!pkt.is_rts()) {
@@ -997,9 +995,7 @@ void UecSrc::processAck(const UecAckPacket& pkt) {
             }else{
                 delay = get_avg_delay();
             }
-            pkt_size = 0;
         }else{
-            pkt_size = _mtu;
             delay = get_avg_delay();
         }
     }
@@ -2157,7 +2153,7 @@ void UecSrc::sendProbe() {
              << endl;
     }
     _probe_seqno++;
-    auto* p = UecDataPacket::newpkt(_flow, NULL, _probe_seqno, _hdr_size,
+    auto* p = UecDataPacket::newpkt(_flow, _probe_seqno, _hdr_size,
                                     UecBasePacket::DATA_PROBE, 0, _dstaddr);
     p->set_dst(_dstaddr);
     uint16_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);

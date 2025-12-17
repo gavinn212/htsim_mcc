@@ -13,6 +13,7 @@
 #include "ndp.h"
 #include "roce.h"
 #include "hpcc.h"
+#include "hpccplusplus.h"
 #include "mtcp.h"
 #include "qcn.h"
 #include <list>
@@ -61,6 +62,12 @@ class RoceTrafficLogger : public TrafficLogger {
 };
 
 class HPCCTrafficLogger : public TrafficLogger {
+ public:
+    void logTraffic(Packet& pkt, Logged& location, TrafficEvent ev);
+    static string event_to_str(RawLogEvent& event);
+};
+
+class HPCCPPTrafficLogger : public TrafficLogger {
  public:
     void logTraffic(Packet& pkt, Logged& location, TrafficEvent ev);
     static string event_to_str(RawLogEvent& event);
@@ -282,6 +289,14 @@ class HPCCSinkLoggerSampling : public SinkLoggerSampling {
     bool isTraffic() { return false;};
  public:
     HPCCSinkLoggerSampling(simtime_picosec period, EventList& eventlist);
+    static string event_to_str(RawLogEvent& event);
+};
+
+class HPCCPPSinkLoggerSampling : public SinkLoggerSampling {
+    virtual void doNextEvent();
+    bool isTraffic() { return false;};
+ public:
+    HPCCPPSinkLoggerSampling(simtime_picosec period, EventList& eventlist);
     static string event_to_str(RawLogEvent& event);
 };
 

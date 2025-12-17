@@ -288,6 +288,9 @@ int main(int argc, char** argv){
             case Logger::HPCC_TRAFFIC: //10
                 out = HPCCTrafficLogger::event_to_str(event);
                 break;
+            case Logger::HPCCPP_TRAFFIC:
+                out = HPCCPPTrafficLogger::event_to_str(event);
+                break;
             case Logger::MCC_TRAFFIC: //36
                 out = MCCTrafficLogger::event_to_str(event);
                 break;
@@ -344,6 +347,9 @@ int main(int argc, char** argv){
                 break;                                
             case Logger::HPCC_SINK: //18
                 out = HPCCSinkLoggerSampling::event_to_str(event);
+                break;
+            case Logger::HPCCPP_SINK:
+                out = HPCCPPSinkLoggerSampling::event_to_str(event);
                 break;
             case Logger::MCC_SINK: //37
                 out = MCCSinkLoggerSampling::event_to_str(event);

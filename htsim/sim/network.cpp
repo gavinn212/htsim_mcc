@@ -225,6 +225,15 @@ Packet::str() const {
     case HPCCNACK:
         s = "HPCCNACK";
         break;
+    case HPCCPP:
+        s = "HPCCPP";
+        break;
+    case HPCCPPACK:
+        s = "HPCCPPACK";
+        break;
+    case HPCCPPNACK:
+        s = "HPCCPPNACK";
+        break;
     case MCC:
         s = "MCC";
         break;

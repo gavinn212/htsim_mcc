@@ -16,6 +16,7 @@ class BaseQueue;
 class QcnReactor;
 class RoceSrc;
 class HPCCSrc;
+class HPCCPPSrc;
 class MCCSrc;
 class QcnQueue;
 class MultipathTcpSrc;
@@ -73,7 +74,8 @@ class Logger {
                      EQDS_SINK = 41, EQDS_MEMORY = 42, EQDS_TRAFFIC = 43,
                      UEC_EVENT=44, UEC_STATE=45, UEC_RECORD=46,
                      UEC_SINK = 47, UEC_MEMORY = 48, UEC_TRAFFIC = 49,
-                     FLOW_EVENT = 50, NIC_EVENT = 51 };
+                     FLOW_EVENT = 50, NIC_EVENT = 51,
+                     HPCCPP_TRAFFIC = 52, HPCCPP_SINK = 53 };
     static string event_to_str(RawLogEvent& event);
     Logger() {};
     virtual ~Logger(){};
@@ -198,6 +200,18 @@ class HPCCLogger  : public Logger {
 
     virtual void logHPCC(HPCCSrc &src, HPCCEvent ev) =0;
     virtual ~HPCCLogger(){};
+};
+
+class HPCCPPLogger  : public Logger {
+ public:
+    enum HPCCPPEvent { HPCCPP_RCV=0, HPCCPP_TIMEOUT=1 };
+    enum HPCCPPState { HPCCPPSTATE_ON=1, HPCCPPSTATE_OFF=0 };
+    enum HPCCPPRecord { AVE_RATE=0 };
+    enum HPCCPPSinkRecord { RATE = 0 };
+    enum HPCCPPMemoryRecord  {MEMORY = 0};
+
+    virtual void logHPCCPP(HPCCPPSrc &src, HPCCPPEvent ev) =0;
+    virtual ~HPCCPPLogger(){};
 };
 
 class MCCLogger  : public Logger {
