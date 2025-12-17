@@ -1,42 +1,42 @@
 # Gavin's  Note
 
-### 参数说明
-MCC 特定参数：
-- mcc_alpha <value>: MCC 协作因子（默认 0.5），用于拥塞窗口计算
-- mcc_beta <value>: MCC 平滑因子（默认 0.3），用于链路利用率平滑
+### Parameter Description
+MCC-specific parameters:
+- mcc_alpha <value>: MCC cooperation factor (default 0.5), used for congestion window calculation
+- mcc_beta <value>: MCC smoothing factor (default 0.3), used for link utilization smoothing
 
-其他常用参数：
-- nodes N: 节点数量（默认 432）
-- strat <strategy>: 路由策略（ecmp_host, ecmp_ar, single 等）
-- tm <file>: 流量矩阵文件
-- end <time>: 仿真结束时间（微秒）
-- q <size>: 队列大小
-- o <file>: 输出日志文件名
-- log sink: 启用sink日志
-- log traffic: 启用流量日志
+Other commonly used parameters:
+- nodes N: number of nodes (default 432)
+- strat <strategy>: routing strategy (ecmp_host, ecmp_ar, single, etc.)
+- tm <file>: traffic matrix file
+- end <time>: simulation end time (microseconds)
+- q <size>: queue size
+- o <file>: output log file name
+- log sink: enable sink logging
+- log traffic: enable traffic logging
 
 ### First use 
 ```
 cd htsim/sim
 
-# 配置CMake项目
+# Configure CMake project
 cmake -S . -B build
 
-# 编译项目（使用并行编译）(这个可能会只编译uet，暂时使用下面替代)
+# Build the project (using parallel build) (this might only build uet, temporarily use the following instead)
 cmake --build build --parallel
 
-# 编译mcc
+# Build mcc
 cmake --build build --target htsim_mcc
 
-# 编译hpcc++
+# Build hpcc++
 cmake --build build --target htsim_hpccplusplus -- -j
 
-# 编译parser
+# Build parser
 cmake --build build --target parse_output
 ```
-编译完成后，可执行文件位于：
+After compilation, the executables are located at:
 htsim/sim/build/datacenter/htsim_mcc
-htsim/sim/datacenter/htsim_mcc（符号链接）
+htsim/sim/datacenter/htsim_mcc（Symbol Link）
 
 
 ### Basic Running
@@ -49,6 +49,17 @@ cd htsim/sim/datacenter
 # parse mcc output
 ../build/parse_output mcc_complete_output.dat -mcc -show
 
+# run mcc with topo file
+# -nodes must match number of node in topology file
+./htsim_mcc \
+    -nodes 128 \
+    -strat ecmp_host \
+    -paths 1 \
+    -tm connection_matrices/one.cm \
+    -topo topologies/fat_tree_128_4os.topo \
+    -end 1000000 \
+    -mcc_alpha 0.5 \
+    -mcc_beta 0.3
 
 
 # Smoke run hpcc++
@@ -64,17 +75,21 @@ htsim/sim/build/parse_output htsim/sim/datacenter/logout.dat > /tmp/parsed.txt
 
 ### Run and generate Log
 ```
-./htsim_mcc\
-    -nodes 16 \
-    -strat ecmp_host     \
-    -paths 1     \
-    -tm connection_matrices/incast.cm     \
-    -end 500000     \
-    -mcc_alpha 0.5     \
-    -mcc_beta 0.3     \
-    -log sink     \
-    -log traffic     \
-    -o output.dat
+# Use a 128-node Fat Tree topology with 4:1 oversubscription
+./htsim_mcc \
+    -nodes 128 \
+    -strat ecmp_host \
+    -paths 1 \
+    -tm connection_matrices/perm_32n_32c_2MB.cm \
+    -topo topologies/fat_tree_128_4os.topo \
+    -end 10000000 \
+    -mcc_alpha 0.5 \
+    -mcc_beta 0.3 \
+    -q 15 \
+    -queue_type lossless_input \
+    -log sink \
+    -log traffic \
+    -o mcc_output.dat
 ```
 
 
@@ -117,10 +132,10 @@ htsim/sim/build/parse_output htsim/sim/datacenter/logout.dat > /tmp/parsed.txt
     -seed 42
 ```
 
-可用的连接矩阵文件位于 htsim/sim/datacenter/connection_matrices/：
-- one.cm: 单连接
-- perm_32n_32c_2MB.cm: 32节点排列
-- incast_128.cm: 128节点incast模式
+Available connection matrix files are in htsim/sim/datacenter/connection_matrices/:
+- one.cm: single connection
+- perm_32n_32c_2MB.cm: 32-node permutation
+- incast_128.cm: 128-node incast pattern
 - etc.
 
 
@@ -195,41 +210,39 @@ Mb0?%
 
 
 
-### Draft running teamplate (old one, may not work)
+### Draft running template (old one, may not work)
 
 ```
-# 基本运行
+# Basic run
 ./main_hpcc -nodes 432 -strat ecmp_host -tm traffic.txt -end 1000000
 
-# 启用自适应路由
+# Enable adaptive routing
 ./main_hpcc -nodes 432 -strat ecmp_ar -ar_method pqb -tm traffic.txt
 
-# 启用详细日志
+# Enable detailed logging
 ./main_hpcc -nodes 432 -strat ecmp_host -log sink -log traffic -o output.log
 
-# 自定义测试样例
+# Custom test case
 ./main_mcc -nodes 432 -strat ecmp_host -tm traffic.txt -end 1000000 -mcc_alpha 0.5 -mcc_beta 0.3
 ```
 
 
 
 ### File Description
-已创建的文件
-`htsim/sim/mccpacket.h` - MCC 数据包定义（MCCPacket、MCCAck、MCCNack
+Files that have been created:
+`htsim/sim/mccpacket.h` - MCC packet definitions (MCCPacket, MCCAck, MCCNack)
 
-`htsim/sim/mccpacket.cpp` - MCC 数据包实现
-htsim/sim/mcc.h - MCC 源和接收器头文件
+`htsim/sim/mccpacket.cpp` - MCC packet implementation
+htsim/sim/mcc.h - MCC source and sink header file
 
-`htsim/sim/mcc.cpp` - MCC 协议实现
+`htsim/sim/mcc.cpp` - MCC protocol implementation
 
-`htsim/sim/datacenter/main_mcc.cpp` - MCC 主程序文件
+`htsim/sim/datacenter/main_mcc.cpp` - MCC main program file
 
-# 主要修改
-1. 在网络包类型中添加了 MCC、MCCACK、MCCNACK
-2. 在 loggertypes.h 中添加了 MCCLogger 类定义
-3. 在 loggertypes.h 中添加了 MCCSrc 前向声明
-
-
+# Main changes
+1. Added MCC, MCCACK, MCCNACK to the network packet types
+2. Added the MCCLogger class definition in loggertypes.h
+3. Added a forward declaration for MCCSrc in loggertypes.h
 
 
 
@@ -245,10 +258,12 @@ htsim/sim/mcc.h - MCC 源和接收器头文件
 
 
 
+ 
+   
 
 
 
-##################################################################################
+# Original README content
 
 # uec-transport-simulation-code
 
@@ -292,13 +307,13 @@ Check the [README](htsim/README.md) file in the `htsim/` folder.
 
 cd htsim/sim
 
-# 配置CMake项目
+# Configure the CMake project
 cmake -S . -B build
 
-# 编译项目（使用并行编译）
+# Build the project (using parallel compilation)
 cmake --build build --parallel
 
-# 或者编译特定目标
+# Or build a specific target
 cmake --build build --target htsim_mcc
 
 # Overview
