@@ -67,17 +67,6 @@ cd htsim/sim/datacenter
 
 # parse output
 ../build/parse_output test_output.dat -ascii 
-
-
-
-# Smoke run hpcc++
-./htsim_hpccplusplus -nodes 16 -tm /tmp/hpccpp_smoke16.cm -strat ecmp_host -paths 8 -end 200 -log sink
-
-# Parse hpcc++ logs with the existing tool (new HPCC++ events are supported):
-../build/parse_output test_output.dat -ascii
-
-# Example hpcc++
-./htsim_hpccplusplus -nodes 128 -tm connection_matrices/… -strat ecmp_host -paths 8 -end 200
 ```
 
 
