@@ -17,22 +17,15 @@ Other commonly used parameters:
 
 ### First use 
 ```
+# If you want to recompile it, delete htsim/sim/build folder then run following command
+
 cd htsim/sim
 
 # Configure CMake project
 cmake -S . -B build
 
-# Build the project (using parallel build) (this might only build uet, temporarily use the following instead)
-cmake --build build --parallel
-
-# Build mcc
-cmake --build build --target htsim_mcc
-
-# Build hpcc++
-cmake --build build --parallel --target htsim_hpccplusplus
-
-# Build parser
-cmake --build build --target parse_output
+# build all
+cmake --build build --parallel --target htsim_mcc htsim_hpccplusplus parse_output
 ```
 After compilation, the executables are located at:
 htsim/sim/build/datacenter/htsim_mcc
@@ -41,7 +34,7 @@ htsim/sim/datacenter/htsim_mcc（Symbol Link）
 
 ### Basic Running
 ```
-cd htsim/sim/datacenter
+cd datacenter
 
 # run mcc
 ./htsim_mcc -nodes 432 -strat ecmp_host -tm connection_matrices/one.cm -end 1000000
