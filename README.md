@@ -29,7 +29,7 @@ cmake --build build --parallel
 cmake --build build --target htsim_mcc
 
 # Build hpcc++
-cmake --build build --target htsim_hpccplusplus -- -j
+cmake --build build --parallel --target htsim_hpccplusplus
 
 # Build parser
 cmake --build build --target parse_output
@@ -62,11 +62,19 @@ cd htsim/sim/datacenter
     -mcc_beta 0.3
 
 
+# demo run hpcc++
+./htsim_hpccplusplus -nodes 128 -tm connection_matrices/perm_128n_128c_2MB.cm -topo topologies/fat_tree_128_1os.topo -strat ecmp_host -paths 4 -q 15 -end 5000 -log sink -o test_output.dat 2>&1
+
+# parse output
+../build/parse_output test_output.dat -ascii 
+
+
+
 # Smoke run hpcc++
 ./htsim_hpccplusplus -nodes 16 -tm /tmp/hpccpp_smoke16.cm -strat ecmp_host -paths 8 -end 200 -log sink
 
 # Parse hpcc++ logs with the existing tool (new HPCC++ events are supported):
-htsim/sim/build/parse_output htsim/sim/datacenter/logout.dat > /tmp/parsed.txt
+../build/parse_output test_output.dat -ascii
 
 # Example hpcc++
 ./htsim_hpccplusplus -nodes 128 -tm connection_matrices/… -strat ecmp_host -paths 8 -end 200

@@ -162,6 +162,10 @@ int main(int argc, char **argv) {
             tm_file = argv[i+1];
             cout << "traffic matrix input file: "<< tm_file << endl;
             i++;
+        } else if (!strcmp(argv[i],"-topo")){
+            topo_file = argv[i+1];
+            cout << "FatTree topology input file: "<< topo_file << endl;
+            i++;
         } else if (!strcmp(argv[i],"-q")){
             queuesize = atoi(argv[i+1]);
             i++;

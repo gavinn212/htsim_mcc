@@ -17,6 +17,7 @@ using namespace std;
 #define LOGSINK   0 
 
 uint32_t HPCCPPSrc::_global_node_count = 0;
+bool HPCCPPSrc::_debug = false;  // Global debug flag
 
 simtime_picosec HPCCPPSrc::_T = timeFromUs(12.0);//Known baseline RTT
 double HPCCPPSrc::_eta = 0.95;//Target link utilization
@@ -76,7 +77,7 @@ HPCCPPSrc::HPCCPPSrc(HPCCPPLogger* logger, TrafficLogger* pktlogger, EventList &
     _link_count = 0;
     _last_update_seq = 0;
 
-    cout << "Initial HPCC++ CWND is " << _cwnd << " target RTT " << timeAsUs(_T) << " rate " << rate << endl;
+    if (_debug) cout << "Initial HPCC++ CWND is " << _cwnd << " target RTT " << timeAsUs(_T) << " rate " << rate << endl;
     _flightsize = 0;
     _U = _eta;
 }
@@ -89,14 +90,14 @@ void HPCCPPSrc::log_me() {
     if (_log_me == true)
         return;
 
-    cout << "Enabling logging on HPCCPPSrc " << _nodename << endl;
+    if (_debug) cout << "Enabling logging on HPCCPPSrc " << _nodename << endl;
     _log_me = true;
     if (_sink)
         _sink->log_me();
 }
 
 void HPCCPPSrc::startflow(){
-    cout << "startflow " << _flow._name << " at " << timeAsUs(eventlist().now()) << endl;
+    if (_debug) cout << "startflow " << _flow._name << " at " << timeAsUs(eventlist().now()) << endl;
     _flow_started = true;
     _highest_sent = 0;
     _last_acked = 0;
@@ -131,7 +132,7 @@ void HPCCPPSrc::processNack(const HPCCPPNack& nack){
     _last_acked = nack.ackno();
     _rtx_packets_sent += _highest_sent - _last_acked;
 
-    cout << "HPCC++ " << _name << " go back n from " <<  _highest_sent << " to " << _last_acked << " at " << timeAsUs(eventlist().now()) << " us" << endl;
+    if (_debug) cout << "HPCC++ " << _name << " go back n from " <<  _highest_sent << " to " << _last_acked << " at " << timeAsUs(eventlist().now()) << " us" << endl;
 
     if (_flow_size && _highest_sent>_flow_size && _last_acked < _flow_size){
         eventlist().sourceIsPendingRel(*this,0);
@@ -155,12 +156,12 @@ void HPCCPPSrc::processAck(const HPCCPPAck& ack) {
 
     if (ackno > _last_update_seq){
         _cwnd = computeWind(measureInFlight(ack), true);
-        cout << "HPCC++ CWND1 " << _cwnd << " ACKNO " << ackno << " at " << timeAsUs(eventlist().now()) << " src " << _nodename << endl;
+        if (_debug) cout << "HPCC++ CWND1 " << _cwnd << " ACKNO " << ackno << " at " << timeAsUs(eventlist().now()) << " src " << _nodename << endl;
         _last_update_seq = _highest_sent;
     }
     else {
         _cwnd = computeWind(measureInFlight(ack), false);
-        cout << "HPCC++ CWND2 " << _cwnd << " ACKNO " << ackno << " at " << timeAsUs(eventlist().now()) << " src " << _nodename << endl;
+        if (_debug) cout << "HPCC++ CWND2 " << _cwnd << " ACKNO " << ackno << " at " << timeAsUs(eventlist().now()) << " src " << _nodename << endl;
     }
 
     _pacing_rate = _cwnd * 8 * pow(10,12) / _T;
@@ -169,7 +170,7 @@ void HPCCPPSrc::processAck(const HPCCPPAck& ack) {
     if (_logger) _logger->logHPCCPP(*this, HPCCPPLogger::HPCCPP_RCV);
 
     if (ackno >= _flow_size){
-        cout << "Flow " << _name << " finished at " << timeAsUs(eventlist().now()) << " total bytes " << ackno << endl;
+        if (_debug) cout << "Flow " << _name << " finished at " << timeAsUs(eventlist().now()) << " total bytes " << ackno << endl;
         _done = true;
         if (_end_trigger) {
             _end_trigger->activate();

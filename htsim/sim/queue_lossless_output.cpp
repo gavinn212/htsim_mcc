@@ -10,6 +10,8 @@
 
 int LosslessOutputQueue::_ecn_enabled = false;
 int LosslessOutputQueue::_K = 0;
+static uint32_t _lossless_out_warning_count = 0;
+static const uint32_t _max_lossless_out_warnings = 10;
 
 LosslessOutputQueue::LosslessOutputQueue(linkspeed_bps bitrate, mem_b maxsize, 
                                          EventList& eventlist, QueueLogger* logger)
@@ -89,7 +91,13 @@ LosslessOutputQueue::receivePacket(Packet& pkt,VirtualQueue* prev)
     _queuesize += pkt.size();
 
     if (_queuesize > _maxsize){
-        cout << " Queue " << _name << " LOSSLESS not working! I should have dropped this packet" << _queuesize / Packet::data_packet_size() << endl;
+        if (_lossless_out_warning_count < _max_lossless_out_warnings) {
+            cout << " Queue " << _name << " LOSSLESS not working! I should have dropped this packet" << _queuesize / Packet::data_packet_size() << endl;
+            _lossless_out_warning_count++;
+            if (_lossless_out_warning_count == _max_lossless_out_warnings) {
+                cout << " (Suppressing further output queue LOSSLESS warnings...)" << endl;
+            }
+        }
     }
 
     if (_logger) 

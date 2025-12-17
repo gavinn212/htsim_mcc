@@ -418,7 +418,10 @@ void FatTreeTopologyCfg::set_linkspeeds(linkspeed_bps linkspeed) {
 }
 
 void FatTreeTopologyCfg::set_queue_sizes(mem_b queuesize) {
-    // all tiers use the same queuesize
+    // all tiers use the same queuesize, but only set if queuesize is non-zero
+    // (to avoid overwriting values set from config file)
+    if (queuesize == 0)
+        return;
     for (int tier = TOR_TIER; tier <= CORE_TIER; tier++) {
         _queue_down[tier] = queuesize;
         if (tier != CORE_TIER)
@@ -570,6 +573,13 @@ unique_ptr<FatTreeTopologyCfg> FatTreeTopologyCfg::load(string filename,
     }
 }
 
+// Helper to trim trailing whitespace (including \r from Windows line endings)
+static void trim_line(string& s) {
+    while (!s.empty() && (s.back() == ' ' || s.back() == '\t' || s.back() == '\r' || s.back() == '\n')) {
+        s.pop_back();
+    }
+}
+
 void FatTreeTopologyCfg::read_cfg(istream& file, mem_b queuesize) {
     //cout << "topo load start\n";
     std::string line;
@@ -584,11 +594,15 @@ void FatTreeTopologyCfg::read_cfg(istream& file, mem_b queuesize) {
 
     while (std::getline(file, line)) {
         linecount++;
+        trim_line(line);  // Handle Windows line endings
+        if (line.empty())
+            continue;
         vector<string> tokens;
         tokenize(line, ' ', tokens);
         if (tokens.size() == 0)
             continue;
-        if (tokens[0][0] == '#') {
+        // Skip empty tokens and comments
+        if (tokens[0].empty() || tokens[0][0] == '#') {
             continue;
         }
         to_lower(tokens[0]);
@@ -624,13 +638,17 @@ void FatTreeTopologyCfg::read_cfg(istream& file, mem_b queuesize) {
     int current_tier = -1;
     do {
         linecount++;
+        trim_line(line);  // Handle Windows line endings
+        if (line.empty())
+            continue;
         vector<string> tokens;
         tokenize(line, ' ', tokens);
         if (tokens.size() < 1) {
             continue;
-    	}
+        }
         to_lower(tokens[0]);
-        if (tokens.size() == 0 || tokens[0][0] == '#') {
+        // Skip empty lines and comments
+        if (tokens.size() == 0 || tokens[0].empty() || tokens[0][0] == '#') {
             continue;
         } else if (tokens[0] == "tier") {
             current_tier = stoi(tokens[1]);

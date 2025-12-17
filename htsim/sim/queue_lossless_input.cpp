@@ -7,6 +7,8 @@
 
 uint64_t LosslessInputQueue::_high_threshold = 0;
 uint64_t LosslessInputQueue::_low_threshold = 0;
+static uint32_t _lossless_warning_count = 0;
+static const uint32_t _max_lossless_warnings = 10;
 
 LosslessInputQueue::LosslessInputQueue(EventList& eventlist)
     : Queue(speedFromGbps(1),Packet::data_packet_size()*2000,eventlist,NULL),
@@ -76,7 +78,13 @@ LosslessInputQueue::receivePacket(Packet& pkt)
     //cout << timeAsMs(eventlist().now()) << " queue " << _name << " switch (" << _switch->_name << ") "<< " recv when paused pkt " << pkt.type() << " sz " << _queuesize << endl;        
 
     if (_queuesize > _maxsize){
-        cout << " Queue " << _name << " LOSSLESS not working! I should have dropped this packet" << _queuesize / Packet::data_packet_size() << endl;
+        if (_lossless_warning_count < _max_lossless_warnings) {
+            cout << " Queue " << _name << " LOSSLESS not working! I should have dropped this packet" << _queuesize / Packet::data_packet_size() << endl;
+            _lossless_warning_count++;
+            if (_lossless_warning_count == _max_lossless_warnings) {
+                cout << " (Suppressing further LOSSLESS warnings...)" << endl;
+            }
+        }
     }
     
     //tell the output queue we're here!

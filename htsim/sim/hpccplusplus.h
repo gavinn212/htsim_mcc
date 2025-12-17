@@ -45,12 +45,12 @@ public:
 
     void set_stoptime(simtime_picosec stop_time) {
         _stop_time = stop_time;
-        cout << "Setting stop time to " << timeAsSec(_stop_time) << endl;
+        if (_debug) cout << "Setting stop time to " << timeAsSec(_stop_time) << endl;
     }
 
     // called from a trigger to start the flow.
     virtual void activate() {
-        cout << "Activate called " << _flow._name << endl;
+        if (_debug) cout << "Activate called " << _flow._name << endl;
         startflow();
     }
 
@@ -106,6 +106,7 @@ public:
 
     static uint32_t _global_node_count; 
     static uint32_t _global_rto_count;  // keep track of the total number of timeouts across all srcs
+    static bool _debug;  // Global debug flag to control verbose console output
 
     //HPCC++ specific parameters (globals)
     static simtime_picosec _T;//Known baseline RTT

@@ -4,6 +4,9 @@
 #include <iostream>
 #include "switch.h"
 
+static uint32_t _lossless_queue_warning_count = 0;
+static const uint32_t _max_lossless_queue_warnings = 10;
+
 LosslessQueue::LosslessQueue(linkspeed_bps bitrate, mem_b maxsize, 
                              EventList& eventlist, QueueLogger* logger, Switch* sw)
     : Queue(bitrate,maxsize,eventlist,logger), 
@@ -87,7 +90,13 @@ LosslessQueue::receivePacket(Packet& pkt)
     //cout << timeAsMs(eventlist().now()) << " queue " << _name << " switch (" << _switch->_name << ") "<< " recv when paused pkt " << pkt.type() << " sz " << _queuesize << endl;        
 
     if (_queuesize > _maxsize){
-        cout << " Queue " << _name << " switch (" << _switch->nodename() << ") "<< " LOSSLESS not working! I should have dropped this packet" << endl;
+        if (_lossless_queue_warning_count < _max_lossless_queue_warnings) {
+            cout << " Queue " << _name << " switch (" << _switch->nodename() << ") "<< " LOSSLESS not working! I should have dropped this packet" << endl;
+            _lossless_queue_warning_count++;
+            if (_lossless_queue_warning_count == _max_lossless_queue_warnings) {
+                cout << " (Suppressing further queue LOSSLESS warnings...)" << endl;
+            }
+        }
     }
 
     if (_logger) 
