@@ -43,7 +43,7 @@ int DEFAULT_NODES = 432;
 EventList eventlist;
 
 void exit_error(char* progr) {
-    cout << "Usage " << progr << " [-nodes N]\n\t[-q queue_size]\n\t[-queue_type composite|random|lossless|lossless_input|]\n\t[-tm traffic_matrix_file]\n\t[-strat route_strategy (single,\n\tecmp_host,ecmp_ar,\n\tecmp_host_ar ar_thresh)]\n\t[-log log_level]\n\t[-seed random_seed]\n\t[-end end_time_in_usec]\n\t[-mtu MTU]\n\t[-hop_latency x] per hop wire latency in us,default 1\n\t[-switch_latency x] switching latency in us, default 0\n\t[-start_delta] time in us to randomly delay the start of connections\n\t[-pfc_thresholds low high]\n\t[-mcc_alpha x] MCC cooperation factor, default 0.5\n\t[-mcc_beta x] MCC smoothing factor, default 0.3" << endl;
+    cout << "Usage " << progr << " [-nodes N]\n\t[-q queue_size]\n\t[-queue_type composite|random|lossless|lossless_input|]\n\t[-tm traffic_matrix_file]\n\t[-topo topology_file] topology file path\n\t[-strat route_strategy (single,\n\tecmp_host,ecmp_ar,\n\tecmp_host_ar ar_thresh)]\n\t[-log log_level]\n\t[-seed random_seed]\n\t[-end end_time_in_usec]\n\t[-mtu MTU]\n\t[-hop_latency x] per hop wire latency in us,default 1\n\t[-switch_latency x] switching latency in us, default 0\n\t[-start_delta] time in us to randomly delay the start of connections\n\t[-pfc_thresholds low high]\n\t[-mcc_alpha x] MCC cooperation factor, default 0.5\n\t[-mcc_beta x] MCC smoothing factor, default 0.3" << endl;
     exit(1);
 }
 
@@ -83,6 +83,7 @@ int main(int argc, char **argv) {
     int end_time = 1000;//in microseconds
 
     char* tm_file = NULL;
+    char* topo_file = NULL;
 
     while (i<argc) {
         if (!strcmp(argv[i],"-o")) {
@@ -359,8 +360,18 @@ int main(int argc, char **argv) {
 #ifdef FAT_TREE
     unique_ptr<FatTreeTopology> top;
     unique_ptr<FatTreeTopologyCfg> topo_cfg;
-    topo_cfg = make_unique<FatTreeTopologyCfg>(3, no_of_nodes, linkspeed, queuesize, 
-                                               hop_latency, switch_latency, qt, snd_type);
+    if (topo_file) {
+        topo_cfg = FatTreeTopologyCfg::load(topo_file, queuesize, qt, snd_type);
+
+        if (topo_cfg->no_of_nodes() != no_of_nodes) {
+            cerr << "Mismatch between connection matrix (" << no_of_nodes << " nodes) and topology ("
+                    << topo_cfg->no_of_nodes() << " nodes)" << endl;
+            exit(1);
+        }
+    } else {
+        topo_cfg = make_unique<FatTreeTopologyCfg>(3, no_of_nodes, linkspeed, queuesize, 
+                                                   hop_latency, switch_latency, qt, snd_type);
+    }
 
     top = make_unique<FatTreeTopology>(topo_cfg.get(), qlf, &eventlist, nullptr);
 #endif
