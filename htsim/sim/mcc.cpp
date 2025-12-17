@@ -387,9 +387,19 @@ MCCPacket::seq_t MCCSrc::computeWind(double U, bool updateWc){
     */
     MCCPacket::seq_t W;
     
-    if (_U >= _eta || _incStage >= _max_stages){
+    // Maximum CWND to prevent overflow (e.g., 100MB)
+    const MCCPacket::seq_t MAX_CWND = 100 * 1024 * 1024;
+    
+    // Ensure _U has a minimum value to prevent division by near-zero
+    double safe_U = max(_U, 0.001);
+    
+    if (safe_U >= _eta || _incStage >= _max_stages){
         // MCC adds alpha cooperation factor
-        W = _cwnd / (_U / _eta) + _Wai * (1 + _alpha);
+        double ratio = safe_U / _eta;
+        W = (MCCPacket::seq_t)(_cwnd / ratio) + _Wai * (1 + _alpha);
+
+        // Cap CWND to prevent overflow
+        if (W > MAX_CWND) W = MAX_CWND;
 
         if (updateWc){
             _incStage = 0;
@@ -399,6 +409,10 @@ MCCPacket::seq_t MCCSrc::computeWind(double U, bool updateWc){
     else {
         // MCC adds alpha cooperation factor
         W = _cwnd + _Wai * (1 + _alpha);
+        
+        // Cap CWND to prevent overflow
+        if (W > MAX_CWND) W = MAX_CWND;
+        
         if (updateWc){
             _incStage++;
             _cwnd = W;

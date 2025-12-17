@@ -1,0 +1,72 @@
+no_of_nodes 54
+no of paths 1
+traffic matrix input file: connection_matrices/incast_experiments/incast_54_32conn_1MB_run4.cm
+endtime(us) 2000000
+queue_type 8
+logging traffic
+Parsed args
+Logging to Research_test/incast/hpcc_incast_run4.dat
+HPCCPPSinkLoggerSampling(p=0.00025 init 
+Tier 0 QueueSize Down 135000 bytes
+Tier 0 QueueSize Up 135000 bytes
+Tier 1 QueueSize Down 135000 bytes
+Tier 1 QueueSize Up 135000 bytes
+Tier 2 QueueSize Down 135000 bytes
+Fat Tree topology (0) with 1us links and 0us switching latency for 6us diameter latency.
+Set params 54
+Tier 0 QueueSize Down 135000 bytes
+Tier 0 QueueSize Up 135000 bytes
+Tier 1 QueueSize Down 135000 bytes
+Tier 1 QueueSize Up 135000 bytes
+Tier 2 QueueSize Down 135000 bytes
+_no_of_nodes 54
+K 6
+Queue type 8
+Loading connection matrix from  connection_matrices/incast_experiments/incast_54_32conn_1MB_run4.cm
+Nodes: 54 Connections: 32 Triggers: 0 Failures: 0
+Starting simulation
+ Queue US12->CS0(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS0->DST0(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS0->DST0(0) LOSSLESS not working! I should have dropped this packet16
+ Queue LS0->DST0(0) LOSSLESS not working! I should have dropped this packet17
+ Queue CS0->US0(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS0->DST0(0) LOSSLESS not working! I should have dropped this packet17
+ Queue US1->LS_0(0) LOSSLESS not working! I should have dropped this packet15
+ Queue US1->LS_0(0) LOSSLESS not working! I should have dropped this packet16
+ Queue US1->LS_0(0) LOSSLESS not working! I should have dropped this packet16
+ Queue US12->CS0(0) LOSSLESS not working! I should have dropped this packet15
+ (Suppressing further output queue LOSSLESS warnings...)
+Flow HPCCPP_1_0 finished at 484.765 total bytes 1053000
+Flow HPCCPP_8_0 finished at 1535.3 total bytes 1053000
+Flow HPCCPP_7_0 finished at 1575.91 total bytes 1053000
+Flow HPCCPP_6_0 finished at 2186.46 total bytes 1053000
+Flow HPCCPP_43_0 finished at 2387.15 total bytes 1053000
+Flow HPCCPP_17_0 finished at 2401.65 total bytes 1053000
+Flow HPCCPP_28_0 finished at 2410.35 total bytes 1053000
+Flow HPCCPP_14_0 finished at 2426.31 total bytes 1053000
+Flow HPCCPP_39_0 finished at 2434.28 total bytes 1053000
+Flow HPCCPP_16_0 finished at 2435.01 total bytes 1053000
+Flow HPCCPP_48_0 finished at 2451.69 total bytes 1053000
+Flow HPCCPP_32_0 finished at 2453.14 total bytes 1053000
+Flow HPCCPP_27_0 finished at 2463.29 total bytes 1053000
+Flow HPCCPP_11_0 finished at 2464.74 total bytes 1053000
+Flow HPCCPP_25_0 finished at 2466.91 total bytes 1053000
+Flow HPCCPP_13_0 finished at 2468.36 total bytes 1053000
+Flow HPCCPP_24_0 finished at 2477.06 total bytes 1053000
+Flow HPCCPP_52_0 finished at 2659.79 total bytes 1053000
+Flow HPCCPP_29_0 finished at 2669.22 total bytes 1053000
+Flow HPCCPP_37_0 finished at 2674.3 total bytes 1053000
+Flow HPCCPP_33_0 finished at 2681.55 total bytes 1053000
+Flow HPCCPP_20_0 finished at 2695.33 total bytes 1053000
+Flow HPCCPP_12_0 finished at 2697.5 total bytes 1053000
+Flow HPCCPP_18_0 finished at 2700.4 total bytes 1053000
+Flow HPCCPP_36_0 finished at 2701.13 total bytes 1053000
+Flow HPCCPP_45_0 finished at 2708.98 total bytes 1053000
+Flow HPCCPP_30_0 finished at 2719.25 total bytes 1053000
+Flow HPCCPP_31_0 finished at 2723.65 total bytes 1053000
+Flow HPCCPP_44_0 finished at 2729.61 total bytes 1053000
+Flow HPCCPP_23_0 finished at 2734.55 total bytes 1053000
+Flow HPCCPP_42_0 finished at 2738.98 total bytes 1053000
+Flow HPCCPP_40_0 finished at 2743.55 total bytes 1053000
+.Done
+New: 0 Rtx: 0

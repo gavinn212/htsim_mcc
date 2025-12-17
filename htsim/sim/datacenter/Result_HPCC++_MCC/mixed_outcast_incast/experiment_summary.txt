@@ -1,0 +1,47 @@
+混合Outcast-Incast流量（小流+大流）实验总结
+============================================
+
+实验配置：
+- 节点数: 54
+- 小流：
+  - Incast连接数: 16（16个源节点向节点0发送）
+  - Outcast连接数: 2（每个源节点向2-1=1个其他目标发送）
+  - 小流大小: 100KB (104857 bytes)
+  - 小流总连接数: 31（16 incast + 15 outcast）
+- 大流：
+  - Incast连接数: 5（5个源节点向节点0发送）
+  - Outcast连接数: 2（每个源节点向2-1=1个其他目标发送）
+  - 大流大小: 10MB (10485760 bytes)
+  - 大流总连接数: 9（5 incast + 4 outcast）
+- 总连接数: 40
+- 仿真结束时间: 30000000 us (30秒)
+- 队列大小: 15 packets
+- 队列类型: lossless_input
+
+混合Outcast-Incast流量特征：
+- 小流（100KB）：模拟短查询、小文件传输等
+- 大流（10MB）：模拟大数据传输、备份等
+- 同时包含Incast（多对一）和Outcast（一对多）模式
+- 测试混合工作负载下不同大小流量的拥塞控制效果
+
+流量矩阵文件：
+- mixed_outcast_incast_54_16si_2so_5li_2lo_run1.cm (seed=43)
+- mixed_outcast_incast_54_16si_2so_5li_2lo_run2.cm (seed=44)
+- mixed_outcast_incast_54_16si_2so_5li_2lo_run3.cm (seed=45)
+- mixed_outcast_incast_54_16si_2so_5li_2lo_run4.cm (seed=46)
+- mixed_outcast_incast_54_16si_2so_5li_2lo_run5.cm (seed=47)
+
+实验结果文件结构：
+- MCC结果: mcc_mixed_outcast_incast_run<X>.dat (二进制日志)
+- MCC输出: mcc_mixed_outcast_incast_run<X>.txt (文本输出)
+- MCC分析: mcc_mixed_outcast_incast_run<X>_analysis.txt (分析结果)
+- HPCC结果: hpcc_mixed_outcast_incast_run<X>.dat (二进制日志)
+- HPCC输出: hpcc_mixed_outcast_incast_run<X>.txt (文本输出)
+- HPCC分析: hpcc_mixed_outcast_incast_run<X>_analysis.txt (分析结果)
+
+其中：
+- X: 流量矩阵编号 (1-5)
+
+总实验数: 5个流量矩阵 × 2个协议 = 10次实验
+
+生成时间: 2025年12月17日 星期三 17时04分00秒 EST

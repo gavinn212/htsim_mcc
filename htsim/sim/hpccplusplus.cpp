@@ -170,7 +170,7 @@ void HPCCPPSrc::processAck(const HPCCPPAck& ack) {
     if (_logger) _logger->logHPCCPP(*this, HPCCPPLogger::HPCCPP_RCV);
 
     if (ackno >= _flow_size){
-        if (_debug) cout << "Flow " << _name << " finished at " << timeAsUs(eventlist().now()) << " total bytes " << ackno << endl;
+        cout << "Flow " << _name << " finished at " << timeAsUs(eventlist().now()) << " total bytes " << ackno << endl;
         _done = true;
         if (_end_trigger) {
             _end_trigger->activate();

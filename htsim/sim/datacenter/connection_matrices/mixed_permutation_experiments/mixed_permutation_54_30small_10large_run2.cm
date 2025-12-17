@@ -1,0 +1,44 @@
+Nodes 54
+Connections 40
+Triggers 0
+
+17->35 id 1 start 9 size 104857
+43->4 id 2 start 53 size 104857
+52->43 id 3 start 5 size 104857
+15->38 id 4 start 88 size 104857
+40->15 id 5 start 40 size 104857
+13->8 id 6 start 28 size 104857
+29->13 id 7 start 81 size 104857
+31->48 id 8 start 16 size 104857
+23->32 id 9 start 61 size 104857
+27->25 id 10 start 6 size 104857
+37->36 id 11 start 54 size 104857
+12->46 id 12 start 93 size 104857
+42->16 id 13 start 97 size 104857
+35->1 id 14 start 62 size 104857
+39->5 id 15 start 28 size 104857
+48->26 id 16 start 3 size 104857
+50->3 id 17 start 20 size 104857
+28->12 id 18 start 19 size 104857
+21->6 id 19 start 16 size 104857
+30->27 id 20 start 17 size 104857
+8->11 id 21 start 11 size 104857
+51->39 id 22 start 88 size 104857
+45->50 id 23 start 78 size 104857
+2->33 id 24 start 89 size 104857
+16->20 id 25 start 69 size 104857
+3->19 id 26 start 27 size 104857
+5->24 id 27 start 37 size 104857
+41->18 id 28 start 37 size 104857
+9->31 id 29 start 58 size 104857
+53->28 id 30 start 96 size 104857
+46->39 id 31 start 29 size 10485760
+53->47 id 32 start 77 size 10485760
+49->48 id 33 start 76 size 10485760
+35->10 id 34 start 16 size 10485760
+6->19 id 35 start 94 size 10485760
+39->6 id 36 start 48 size 10485760
+13->1 id 37 start 28 size 10485760
+38->30 id 38 start 91 size 10485760
+25->3 id 39 start 48 size 10485760
+26->41 id 40 start 28 size 10485760

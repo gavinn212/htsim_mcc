@@ -1,0 +1,94 @@
+no_of_nodes 54
+no of paths 1
+traffic matrix input file: connection_matrices/permutation_experiments/permutation_54_54conn_1MB_run1.cm
+endtime(us) 2000000
+queue_type 8
+logging traffic
+Parsed args
+Logging to Research_test/permutation/hpcc_permutation_run1.dat
+HPCCPPSinkLoggerSampling(p=0.00025 init 
+Tier 0 QueueSize Down 135000 bytes
+Tier 0 QueueSize Up 135000 bytes
+Tier 1 QueueSize Down 135000 bytes
+Tier 1 QueueSize Up 135000 bytes
+Tier 2 QueueSize Down 135000 bytes
+Fat Tree topology (0) with 1us links and 0us switching latency for 6us diameter latency.
+Set params 54
+Tier 0 QueueSize Down 135000 bytes
+Tier 0 QueueSize Up 135000 bytes
+Tier 1 QueueSize Down 135000 bytes
+Tier 1 QueueSize Up 135000 bytes
+Tier 2 QueueSize Down 135000 bytes
+_no_of_nodes 54
+K 6
+Queue type 8
+Loading connection matrix from  connection_matrices/permutation_experiments/permutation_54_54conn_1MB_run1.cm
+Nodes: 54 Connections: 54 Triggers: 0 Failures: 0
+Starting simulation
+ Queue LS4->US5(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS6->US6(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS13->US14(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS11->US11(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS14->US13(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS12->US14(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS4->US5(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS6->US6(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS13->US14(0) LOSSLESS not working! I should have dropped this packet15
+ Queue LS11->US11(0) LOSSLESS not working! I should have dropped this packet15
+ (Suppressing further output queue LOSSLESS warnings...)
+Flow HPCCPP_23_21 finished at 93.2071 total bytes 1053000
+Flow HPCCPP_26_24 finished at 93.6919 total bytes 1053000
+Flow HPCCPP_48_50 finished at 94.5272 total bytes 1053000
+Flow HPCCPP_5_1 finished at 101.877 total bytes 1053000
+Flow HPCCPP_52_48 finished at 102.76 total bytes 1053000
+Flow HPCCPP_45_38 finished at 116.959 total bytes 1053000
+Flow HPCCPP_1_20 finished at 119.131 total bytes 1053000
+Flow HPCCPP_46_5 finished at 120.655 total bytes 1053000
+Flow HPCCPP_2_6 finished at 137.772 total bytes 1053000
+Flow HPCCPP_6_42 finished at 142.159 total bytes 1053000
+Flow HPCCPP_22_26 finished at 142.781 total bytes 1053000
+Flow HPCCPP_53_49 finished at 147.928 total bytes 1053000
+Flow HPCCPP_32_3 finished at 153.051 total bytes 1053000
+Flow HPCCPP_47_23 finished at 161.127 total bytes 1053000
+Flow HPCCPP_24_14 finished at 163.275 total bytes 1053000
+Flow HPCCPP_28_2 finished at 167.034 total bytes 1053000
+Flow HPCCPP_10_32 finished at 175.963 total bytes 1053000
+Flow HPCCPP_14_16 finished at 187.654 total bytes 1053000
+Flow HPCCPP_3_19 finished at 191.102 total bytes 1053000
+Flow HPCCPP_37_11 finished at 208.242 total bytes 1053000
+Flow HPCCPP_17_18 finished at 209.509 total bytes 1053000
+Flow HPCCPP_16_30 finished at 213.93 total bytes 1053000
+Flow HPCCPP_25_4 finished at 219.25 total bytes 1053000
+Flow HPCCPP_20_0 finished at 223.275 total bytes 1053000
+Flow HPCCPP_51_33 finished at 226.578 total bytes 1053000
+Flow HPCCPP_0_12 finished at 227.356 total bytes 1053000
+Flow HPCCPP_11_7 finished at 227.935 total bytes 1053000
+Flow HPCCPP_7_40 finished at 230.363 total bytes 1053000
+Flow HPCCPP_49_25 finished at 233.47 total bytes 1053000
+Flow HPCCPP_27_37 finished at 233.556 total bytes 1053000
+Flow HPCCPP_4_22 finished at 234.195 total bytes 1053000
+Flow HPCCPP_30_13 finished at 234.382 total bytes 1053000
+Flow HPCCPP_31_8 finished at 243.895 total bytes 1053000
+Flow HPCCPP_40_53 finished at 244.129 total bytes 1053000
+Flow HPCCPP_50_28 finished at 244.97 total bytes 1053000
+Flow HPCCPP_33_31 finished at 250.194 total bytes 1053000
+Flow HPCCPP_35_52 finished at 250.455 total bytes 1053000
+Flow HPCCPP_43_35 finished at 255.918 total bytes 1053000
+Flow HPCCPP_41_43 finished at 266.987 total bytes 1053000
+Flow HPCCPP_36_17 finished at 271.369 total bytes 1053000
+Flow HPCCPP_15_51 finished at 276.814 total bytes 1053000
+Flow HPCCPP_19_36 finished at 295.527 total bytes 1053000
+Flow HPCCPP_21_44 finished at 299.976 total bytes 1053000
+Flow HPCCPP_12_34 finished at 305.745 total bytes 1053000
+Flow HPCCPP_9_41 finished at 310.166 total bytes 1053000
+Flow HPCCPP_13_27 finished at 319.763 total bytes 1053000
+Flow HPCCPP_34_15 finished at 324.523 total bytes 1053000
+Flow HPCCPP_44_29 finished at 325.682 total bytes 1053000
+Flow HPCCPP_39_9 finished at 334.67 total bytes 1053000
+Flow HPCCPP_18_39 finished at 341.629 total bytes 1053000
+Flow HPCCPP_38_10 finished at 346.68 total bytes 1053000
+Flow HPCCPP_8_45 finished at 368.595 total bytes 1053000
+Flow HPCCPP_29_46 finished at 396.304 total bytes 1053000
+Flow HPCCPP_42_47 finished at 418.256 total bytes 1053000
+.Done
+New: 0 Rtx: 0
