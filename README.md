@@ -15,6 +15,22 @@ Other commonly used parameters:
 - log sink: enable sink logging
 - log traffic: enable traffic logging
 
+HPCC++改进：
+
+- 更精确的利用率计算 - 使用归一化队列大小 
+- 快速恢复机制 - 当拥塞消除时快速恢复发送速率
+- 平滑的速率调整 - 在目标利用率附近使用更温和的调整
+- 最小窗口保证 - 避免窗口过小导致的性能问题
+
+新增参数：
+
+- _gamma - 快速恢复因子 (0.9)
+- _maxQueueBytes - 参考最大队列字节数 (100KB)
+- _minWind - 最小窗口大小
+
+
+
+
 ### First use 
 ```
 # If you want to recompile it, delete htsim/sim/build folder then run following command
