@@ -1,50 +1,50 @@
 #!/bin/bash
-# Incast流量实验脚本
-# 功能：
-# 1. 创建必要的目录结构
-# 2. 生成5个incast流量矩阵文件（使用不同随机种子）
-# 3. 对每个cm文件，运行MCC和HPCC各5次
-# 4. 将结果保存到Research_test/incast文件夹
+# Incast Traffic Experiment Script
+# Functions:
+# 1. Create necessary directory structure
+# 2. Generate 5 incast traffic matrix files (using different random seeds)
+# 3. Run MCC and HPCC 5 times for each cm file
+# 4. Save results to Research_10MB/incast folder
 
-cd /Users/huangxucheng/Desktop/htsim2/htsim/sim/datacenter
+cd /Users/huangxucheng/Desktop/htsim_mcc/htsim/sim/datacenter
 
 # ==========================================
-# 1. 创建目录结构
+# 1. Create Directory Structure
 # ==========================================
 echo "=========================================="
-echo "创建目录结构"
+echo "Creating directory structure"
 echo "=========================================="
 
-# 创建实验结果目录
-mkdir -p Research_test/incast
-echo "✓ 创建目录: Research_test/incast"
+# Create experiment results directory
+mkdir -p Research_10MB/incast
+echo "Created directory: Research_10MB/incast"
 
-# 创建流量矩阵存储目录
+# Create traffic matrix storage directory
 mkdir -p connection_matrices/incast_experiments
-echo "✓ 创建目录: connection_matrices/incast_experiments"
+echo "Created directory: connection_matrices/incast_experiments"
 
 echo ""
 
 # ==========================================
-# 2. 生成Incast流量矩阵文件（5个，使用不同随机种子）
+# 2. Generate Incast Traffic Matrix Files (5 files with different random seeds)
 # ==========================================
 echo "=========================================="
-echo "生成Incast流量矩阵文件"
+echo "Generating Incast traffic matrix files"
 echo "=========================================="
 
 NODES=54
 CONNS=32
-FLOWSIZE=1048576  # 1MB
-EXTRATIME=0       # 同时启动
-PREFER_REMOTE=0   # 随机选择源节点
+FLOWSIZE=10485760  # 10MB
+EXTRATIME=0       # Start simultaneously
+PREFER_REMOTE=0   # Randomly select source nodes
 
-# 生成5个不同的流量矩阵文件
-for i in {1..5}; do
-    SEED=$((42 + i))  # 使用不同的随机种子：43, 44, 45, 46, 47
+# Generate 3 different traffic matrix files
+for i in {1..3}; do
+    SEED=$((42 + i))  # Use different random seeds: 43, 44, 45
     
-    echo "生成 incast_54_32conn_1MB_run${i}.cm (seed=${SEED})..."
+    echo "Generating incast_54_32conn_10MB_run${i}.cm (seed=${SEED})..."
     python connection_matrices/gen_incast.py \
-        connection_matrices/incast_experiments/incast_54_32conn_1MB_run${i}.cm \
+        connection_matrices/incast_experiments/incast_54_32conn_10MB_run${i}.cm \
         $NODES \
         $CONNS \
         $FLOWSIZE \
@@ -53,60 +53,61 @@ for i in {1..5}; do
         $PREFER_REMOTE
     
     if [ $? -eq 0 ]; then
-        echo "  ✓ 成功生成 incast_54_32conn_1MB_run${i}.cm"
+        echo "  Successfully generated incast_54_32conn_10MB_run${i}.cm"
     else
-        echo "  ✗ 生成失败 incast_54_32conn_1MB_run${i}.cm"
+        echo "  Failed to generate incast_54_32conn_10MB_run${i}.cm"
         exit 1
     fi
 done
 
 echo ""
-echo "流量矩阵文件生成完成！"
+echo "Traffic matrix file generation completed!"
 echo ""
 
 # ==========================================
-# 3. 运行实验（对每个cm文件，运行MCC和HPCC各5次）
+# 3. Run Experiments (Run MCC and HPCC 5 times for each cm file)
 # ==========================================
 echo "=========================================="
-echo "开始运行实验"
+echo "Starting experiments"
 echo "=========================================="
 echo ""
 
-# 实验参数
+# Experiment parameters
 END_TIME=2000000
 MCC_ALPHA=0.5
 MCC_BETA=0.3
 QUEUE_SIZE=15
 QUEUE_TYPE="lossless_input"
 
-# 对每个流量矩阵文件运行实验
-for run in {1..5}; do
-    CM_FILE="connection_matrices/incast_experiments/incast_54_32conn_1MB_run${run}.cm"
+# Run experiments for each traffic matrix file
+for run in {1..3}; do
+    CM_FILE="connection_matrices/incast_experiments/incast_54_32conn_10MB_run${run}.cm"
     
     echo "----------------------------------------"
-    echo "处理流量矩阵: incast_54_32conn_1MB_run${run}.cm"
+    echo "Processing traffic matrix: incast_54_32conn_10MB_run${run}.cm"
     echo "----------------------------------------"
     
-    # 检查文件是否存在
+    # Check if file exists
     if [ ! -f "$CM_FILE" ]; then
-        echo "✗ 错误: 文件不存在 $CM_FILE"
+        echo "Error: File does not exist $CM_FILE"
         continue
     fi
     
-    # 对每个cm文件，运行MCC和HPCC各一次
+    # Run MCC and HPCC once for each cm file
     echo ""
     
     # ==========================================
-    # 运行MCC实验
+    # Run MCC Experiment
     # ==========================================
-    MCC_OUTPUT_DAT="Research_test/incast/mcc_incast_run${run}.dat"
-    MCC_OUTPUT_TXT="Research_test/incast/mcc_incast_run${run}.txt"
+    MCC_OUTPUT_DAT="Research_10MB/incast/mcc_incast_run${run}.dat"
+    MCC_OUTPUT_TXT="Research_10MB/incast/mcc_incast_run${run}.txt"
     
-    echo "  运行MCC..."
+    echo "  Running MCC..."
     ./htsim_mcc \
         -nodes 54 \
         -strat ecmp_host \
         -paths 1 \
+        -topo topologies/fat_tree_54.topo \
         -tm $CM_FILE \
         -end $END_TIME \
         -mcc_alpha $MCC_ALPHA \
@@ -119,27 +120,28 @@ for run in {1..5}; do
         > $MCC_OUTPUT_TXT 2>&1
     
     if [ $? -eq 0 ]; then
-        echo "    ✓ MCC运行完成"
+        echo "    MCC completed"
         
-        # 分析MCC结果
-        echo "   分析MCC结果..."
-        ./analyze_mcc_output.sh $MCC_OUTPUT_TXT > Research_test/incast/mcc_incast_run${run}_analysis.txt 2>&1
-        echo "    ✓ MCC分析完成"
+        # Analyze MCC results
+        echo "    Analyzing MCC results..."
+        ./analyze_mcc_output.sh $MCC_OUTPUT_TXT > Research_10MB/incast/mcc_incast_run${run}_analysis.txt 2>&1
+        echo "    MCC analysis completed"
     else
-        echo "    ✗ MCC运行失败，查看日志: $MCC_OUTPUT_TXT"
+        echo "    MCC failed, check log: $MCC_OUTPUT_TXT"
     fi
     
     # ==========================================
-    # 运行HPCC实验
+    # Run HPCC Experiment
     # ==========================================
-    HPCC_OUTPUT_DAT="Research_test/incast/hpcc_incast_run${run}.dat"
-    HPCC_OUTPUT_TXT="Research_test/incast/hpcc_incast_run${run}.txt"
+    HPCC_OUTPUT_DAT="Research_10MB/incast/hpcc_incast_run${run}.dat"
+    HPCC_OUTPUT_TXT="Research_10MB/incast/hpcc_incast_run${run}.txt"
     
-    echo "  运行HPCC++..."
+    echo "  Running HPCC++..."
     ./htsim_hpccplusplus \
         -nodes 54 \
         -strat ecmp_host \
         -paths 1 \
+        -topo topologies/fat_tree_54.topo \
         -tm $CM_FILE \
         -end $END_TIME \
         -q $QUEUE_SIZE \
@@ -150,78 +152,77 @@ for run in {1..5}; do
         > $HPCC_OUTPUT_TXT 2>&1
     
     if [ $? -eq 0 ]; then
-        echo "    ✓ HPCC++运行完成"
+        echo "    HPCC++ completed"
         
-        # 分析HPCC++结果
+        # Analyze HPCC++ results
         if [ -f "./analyze_hpccplusplus_output.sh" ]; then
-            echo "   分析HPCC++结果..."
-            ./analyze_hpccplusplus_output.sh $HPCC_OUTPUT_TXT > Research_test/incast/hpcc_incast_run${run}_analysis.txt 2>&1
-            echo "    ✓ HPCC++分析完成"
+            echo "    Analyzing HPCC++ results..."
+            ./analyze_hpccplusplus_output.sh $HPCC_OUTPUT_TXT > Research_10MB/incast/hpcc_incast_run${run}_analysis.txt 2>&1
+            echo "    HPCC++ analysis completed"
         fi
     else
-        echo "    ✗ HPCC++运行失败，查看日志: $HPCC_OUTPUT_TXT"
+        echo "    HPCC++ failed, check log: $HPCC_OUTPUT_TXT"
     fi
     
     echo ""
 done
 
 # ==========================================
-# 4. 生成实验总结
+# 4. Generate Experiment Summary
 # ==========================================
 echo "=========================================="
-echo "实验完成！生成总结报告"
+echo "Experiments completed! Generating summary report"
 echo "=========================================="
 
-SUMMARY_FILE="Research_test/incast/experiment_summary.txt"
+SUMMARY_FILE="Research_10MB/incast/experiment_summary.txt"
 
 cat > $SUMMARY_FILE << EOF
-Incast流量实验总结
-==================
+Incast Traffic Experiment Summary
+=================================
 
-实验配置：
-- 节点数: 54
-- 连接数: 32 (32个源节点向节点0发送)
-- 流大小: 1MB (1048576 bytes)
-- 启动时间: 同时启动 (0 us)
-- 仿真结束时间: 2000000 us (2秒)
-- 队列大小: 15 packets
-- 队列类型: lossless_input
+Experiment Configuration:
+- Number of nodes: 54
+- Number of connections: 32 (32 source nodes send to node 0)
+- Flow size: 10MB (10485760 bytes)
+- Start time: Simultaneous start (0 us)
+- Simulation end time: 2000000 us (2 seconds)
+- Queue size: 15 packets
+- Queue type: lossless_input
 
-流量矩阵文件：
+Traffic Matrix Files:
 EOF
 
-for run in {1..5}; do
-    echo "- incast_54_32conn_1MB_run${run}.cm (seed=$((42+run)))" >> $SUMMARY_FILE
+for run in {1..3}; do
+    echo "- incast_54_32conn_10MB_run${run}.cm (seed=$((42+run)))" >> $SUMMARY_FILE
 done
 
 cat >> $SUMMARY_FILE << EOF
 
-实验结果文件结构：
-- MCC结果: mcc_incast_run<X>.dat (二进制日志)
-- MCC输出: mcc_incast_run<X>.txt (文本输出)
-- MCC分析: mcc_incast_run<X>_analysis.txt (分析结果)
-- HPCC结果: hpcc_incast_run<X>.dat (二进制日志)
-- HPCC输出: hpcc_incast_run<X>.txt (文本输出)
-- HPCC分析: hpcc_incast_run<X>_analysis.txt (分析结果)
+Experiment Result File Structure:
+- MCC results: mcc_incast_run<X>.dat (binary log)
+- MCC output: mcc_incast_run<X>.txt (text output)
+- MCC analysis: mcc_incast_run<X>_analysis.txt (analysis results)
+- HPCC results: hpcc_incast_run<X>.dat (binary log)
+- HPCC output: hpcc_incast_run<X>.txt (text output)
+- HPCC analysis: hpcc_incast_run<X>_analysis.txt (analysis results)
 
-其中：
-- X: 流量矩阵编号 (1-5)
+Where:
+- X: Traffic matrix number (1-3)
 
-总实验数: 5个流量矩阵 × 2个协议 = 10次实验
+Total experiments: 3 traffic matrices x 2 protocols = 6 experiments
 
-生成时间: $(date)
+Generated: $(date)
 EOF
 
 echo ""
-echo "实验总结已保存到: $SUMMARY_FILE"
+echo "Experiment summary saved to: $SUMMARY_FILE"
 echo ""
 echo "=========================================="
-echo "所有实验完成！"
+echo "All experiments completed!"
 echo "=========================================="
 echo ""
-echo "结果文件位置:"
-echo "  - 流量矩阵: connection_matrices/incast_experiments/"
-echo "  - 实验结果: Research_test/incast/"
-echo "  - 实验总结: Research_test/incast/experiment_summary.txt"
+echo "Result file locations:"
+echo "  - Traffic matrices: connection_matrices/incast_experiments/"
+echo "  - Experiment results: Research_10MB/incast/"
+echo "  - Experiment summary: Research_10MB/incast/experiment_summary.txt"
 echo ""
-

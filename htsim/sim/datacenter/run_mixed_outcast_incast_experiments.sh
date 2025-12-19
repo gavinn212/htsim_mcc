@@ -1,57 +1,57 @@
 #!/bin/bash
-# 混合Outcast-Incast流量（小流+大流）实验脚本
-# 功能：
-# 1. 创建必要的目录结构
-# 2. 生成5个混合Outcast-Incast流量矩阵文件（使用不同随机种子）
-# 3. 对每个cm文件，运行MCC和HPCC各一次
-# 4. 将结果保存到Research_test/mixed_outcast_incast文件夹
+# Mixed Outcast-Incast Traffic (small + large flows) Experiment Script
+# Functions:
+# 1. Create necessary directory structure
+# 2. Generate traffic matrix files (using different random seeds)
+# 3. Run MCC and HPCC once for each cm file
+# 4. Save results to Research_10MB/mixed_outcast_incast folder
 
-cd /Users/huangxucheng/Desktop/htsim2/htsim/sim/datacenter
+cd /Users/huangxucheng/Desktop/htsim_mcc/htsim/sim/datacenter
 
 # ==========================================
-# 1. 创建目录结构
+# 1. Create Directory Structure
 # ==========================================
 echo "=========================================="
-echo "创建目录结构"
+echo "Creating directory structure"
 echo "=========================================="
 
-# 创建实验结果目录
-mkdir -p Research_test/mixed_outcast_incast
-echo "✓ 创建目录: Research_test/mixed_outcast_incast"
+# Create experiment results directory
+mkdir -p Research_10MB/mixed_outcast_incast
+echo "Created directory: Research_10MB/mixed_outcast_incast"
 
-# 创建流量矩阵存储目录
+# Create traffic matrix storage directory
 mkdir -p connection_matrices/mixed_outcast_incast_experiments
-echo "✓ 创建目录: connection_matrices/mixed_outcast_incast_experiments"
+echo "Created directory: connection_matrices/mixed_outcast_incast_experiments"
 
 echo ""
 
 # ==========================================
-# 2. 生成混合Outcast-Incast流量矩阵文件（5个，使用不同随机种子）
+# 2. Generate Traffic Matrix Files (using different random seeds)
 # ==========================================
 echo "=========================================="
-echo "生成混合Outcast-Incast流量矩阵文件（小流+大流）"
+echo "Generating traffic matrix files (small + large flows)"
 echo "=========================================="
 
 NODES=54
-# 小流参数（与Permutation混合流量相同）
+# Small flow parameters (same as Permutation mixed traffic)
 SMALL_FLOWSIZE=104857   # 100KB
-SMALL_CONNS_INCAST=16   # 小流Incast连接数（16个源节点向节点0发送）
-SMALL_CONNS_OUTCAST=2   # 小流Outcast连接数（每个源节点发送到2-1=1个其他目标）
-# 总小流连接数 = 16 + (16-1)*(2-1) = 16 + 15 = 31（接近30）
+SMALL_CONNS_INCAST=16   # Small flow Incast connections (16 source nodes send to node 0)
+SMALL_CONNS_OUTCAST=2   # Small flow Outcast connections (each source sends to 2-1=1 other targets)
+# Total small flow connections = 16 + (16-1)*(2-1) = 16 + 15 = 31 (close to 30)
 
-# 大流参数（与Permutation混合流量相同）
+# Large flow parameters (same as Permutation mixed traffic)
 LARGE_FLOWSIZE=10485760 # 10MB
-LARGE_CONNS_INCAST=5    # 大流Incast连接数（5个源节点向节点0发送）
-LARGE_CONNS_OUTCAST=2   # 大流Outcast连接数（每个源节点发送到2-1=1个其他目标）
-# 总大流连接数 = 5 + (5-1)*(2-1) = 5 + 4 = 9（接近10）
+LARGE_CONNS_INCAST=5    # Large flow Incast connections (5 source nodes send to node 0)
+LARGE_CONNS_OUTCAST=2   # Large flow Outcast connections (each source sends to 2-1=1 other targets)
+# Total large flow connections = 5 + (5-1)*(2-1) = 5 + 4 = 9 (close to 10)
 
 RANDSEED=42
 
-# 生成5个不同的流量矩阵文件
-for i in {1..5}; do
-    SEED=$((42 + i))  # 使用不同的随机种子：43, 44, 45, 46, 47
+# Generate traffic matrix files
+for i in {1..3}; do
+    SEED=$((42 + i))  # Use different random seeds: 43, 44, 45
     
-    echo "生成 mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${i}.cm (seed=${SEED})..."
+    echo "Generating mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${i}.cm (seed=${SEED})..."
     python connection_matrices/gen_mixed_outcast_incast.py \
         connection_matrices/mixed_outcast_incast_experiments/mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${i}.cm \
         $NODES \
@@ -64,64 +64,65 @@ for i in {1..5}; do
         $SEED
     
     if [ $? -eq 0 ]; then
-        echo "  ✓ 成功生成 mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${i}.cm"
+        echo "  Successfully generated mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${i}.cm"
     else
-        echo "  ✗ 生成失败 mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${i}.cm"
+        echo "  Failed to generate mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${i}.cm"
         exit 1
     fi
 done
 
 echo ""
-echo "流量矩阵文件生成完成！"
+echo "Traffic matrix file generation completed!"
 echo ""
 
 # ==========================================
-# 3. 运行实验（对每个cm文件，运行MCC和HPCC各一次）
+# 3. Run Experiments (Run MCC and HPCC once for each cm file)
 # ==========================================
 echo "=========================================="
-echo "开始运行实验"
+echo "Starting experiments"
 echo "=========================================="
 echo ""
 
-# 实验参数
-END_TIME=30000000  # 30秒（MCC的大流传输非常慢，需要更长时间完成）
+# Experiment parameters
+END_TIME=30000000  # 30 seconds (MCC large flow transfer is slow, needs more time)
 MCC_ALPHA=0.5
 MCC_BETA=0.3
 QUEUE_SIZE=15
 QUEUE_TYPE="lossless_input"
 
-# 计算总连接数
+# Calculate total connections
 SMALL_TOTAL=$((SMALL_CONNS_INCAST + (SMALL_CONNS_INCAST - 1) * (SMALL_CONNS_OUTCAST - 1)))
 LARGE_TOTAL=$((LARGE_CONNS_INCAST + (LARGE_CONNS_INCAST - 1) * (LARGE_CONNS_OUTCAST - 1)))
 
-# 对每个流量矩阵文件运行实验
-for run in {1..5}; do
+# Run experiments for each traffic matrix file
+for run in {1..3}; do
     CM_FILE="connection_matrices/mixed_outcast_incast_experiments/mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${run}.cm"
     
     echo "----------------------------------------"
-    echo "处理流量矩阵: mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${run}.cm"
+    echo "Processing traffic matrix: mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${run}.cm"
     echo "----------------------------------------"
     
-    # 检查文件是否存在
+    # Check if file exists
     if [ ! -f "$CM_FILE" ]; then
-        echo "✗ 错误: 文件不存在 $CM_FILE"
+        echo "Error: File does not exist $CM_FILE"
         continue
     fi
     
-    # 对每个cm文件，运行MCC和HPCC各一次
+    # Run MCC and HPCC once for each cm file
     echo ""
     
     # ==========================================
-    # 运行MCC实验
+    # Run MCC Experiment
     # ==========================================
-    MCC_OUTPUT_DAT="Research_test/mixed_outcast_incast/mcc_mixed_outcast_incast_run${run}.dat"
-    MCC_OUTPUT_TXT="Research_test/mixed_outcast_incast/mcc_mixed_outcast_incast_run${run}.txt"
+    MCC_OUTPUT_DAT="Research_10MB/mixed_outcast_incast/mcc_mixed_outcast_incast_run${run}.dat"
+    MCC_OUTPUT_TXT="Research_10MB/mixed_outcast_incast/mcc_mixed_outcast_incast_run${run}.txt"
     
-    echo "  运行MCC..."
+    echo "  Running MCC..."
     ./htsim_mcc \
         -nodes 54 \
         -strat ecmp_host \
         -paths 1 \
+        -topo topologies/fat_tree_54.topo \
         -tm $CM_FILE \
         -end $END_TIME \
         -mcc_alpha $MCC_ALPHA \
@@ -134,27 +135,28 @@ for run in {1..5}; do
         > $MCC_OUTPUT_TXT 2>&1
     
     if [ $? -eq 0 ]; then
-        echo "    ✓ MCC运行完成"
+        echo "    MCC completed"
         
-        # 分析MCC结果
-        echo "   分析MCC结果..."
-        ./analyze_mcc_output.sh $MCC_OUTPUT_TXT > Research_test/mixed_outcast_incast/mcc_mixed_outcast_incast_run${run}_analysis.txt 2>&1
-        echo "    ✓ MCC分析完成"
+        # Analyze MCC results
+        echo "    Analyzing MCC results..."
+        ./analyze_mcc_output.sh $MCC_OUTPUT_TXT > Research_10MB/mixed_outcast_incast/mcc_mixed_outcast_incast_run${run}_analysis.txt 2>&1
+        echo "    MCC analysis completed"
     else
-        echo "    ✗ MCC运行失败，查看日志: $MCC_OUTPUT_TXT"
+        echo "    MCC failed, check log: $MCC_OUTPUT_TXT"
     fi
     
     # ==========================================
-    # 运行HPCC实验
+    # Run HPCC Experiment
     # ==========================================
-    HPCC_OUTPUT_DAT="Research_test/mixed_outcast_incast/hpcc_mixed_outcast_incast_run${run}.dat"
-    HPCC_OUTPUT_TXT="Research_test/mixed_outcast_incast/hpcc_mixed_outcast_incast_run${run}.txt"
+    HPCC_OUTPUT_DAT="Research_10MB/mixed_outcast_incast/hpcc_mixed_outcast_incast_run${run}.dat"
+    HPCC_OUTPUT_TXT="Research_10MB/mixed_outcast_incast/hpcc_mixed_outcast_incast_run${run}.txt"
     
-    echo "  运行HPCC++..."
+    echo "  Running HPCC++..."
     ./htsim_hpccplusplus \
         -nodes 54 \
         -strat ecmp_host \
         -paths 1 \
+        -topo topologies/fat_tree_54.topo \
         -tm $CM_FILE \
         -end $END_TIME \
         -q $QUEUE_SIZE \
@@ -165,92 +167,91 @@ for run in {1..5}; do
         > $HPCC_OUTPUT_TXT 2>&1
     
     if [ $? -eq 0 ]; then
-        echo "    ✓ HPCC++运行完成"
+        echo "    HPCC++ completed"
         
-        # 分析HPCC++结果
+        # Analyze HPCC++ results
         if [ -f "./analyze_hpccplusplus_output.sh" ]; then
-            echo "   分析HPCC++结果..."
-            ./analyze_hpccplusplus_output.sh $HPCC_OUTPUT_TXT > Research_test/mixed_outcast_incast/hpcc_mixed_outcast_incast_run${run}_analysis.txt 2>&1
-            echo "    ✓ HPCC++分析完成"
+            echo "    Analyzing HPCC++ results..."
+            ./analyze_hpccplusplus_output.sh $HPCC_OUTPUT_TXT > Research_10MB/mixed_outcast_incast/hpcc_mixed_outcast_incast_run${run}_analysis.txt 2>&1
+            echo "    HPCC++ analysis completed"
         fi
     else
-        echo "    ✗ HPCC++运行失败，查看日志: $HPCC_OUTPUT_TXT"
+        echo "    HPCC++ failed, check log: $HPCC_OUTPUT_TXT"
     fi
     
     echo ""
 done
 
 # ==========================================
-# 4. 生成实验总结
+# 4. Generate Experiment Summary
 # ==========================================
 echo "=========================================="
-echo "实验完成！生成总结报告"
+echo "Experiments completed! Generating summary report"
 echo "=========================================="
 
-SUMMARY_FILE="Research_test/mixed_outcast_incast/experiment_summary.txt"
+SUMMARY_FILE="Research_10MB/mixed_outcast_incast/experiment_summary.txt"
 
 cat > $SUMMARY_FILE << EOF
-混合Outcast-Incast流量（小流+大流）实验总结
-============================================
+Mixed Outcast-Incast Traffic (small + large flows) Experiment Summary
+=====================================================================
 
-实验配置：
-- 节点数: 54
-- 小流：
-  - Incast连接数: ${SMALL_CONNS_INCAST}（${SMALL_CONNS_INCAST}个源节点向节点0发送）
-  - Outcast连接数: ${SMALL_CONNS_OUTCAST}（每个源节点向${SMALL_CONNS_OUTCAST}-1=1个其他目标发送）
-  - 小流大小: 100KB (${SMALL_FLOWSIZE} bytes)
-  - 小流总连接数: ${SMALL_TOTAL}（${SMALL_CONNS_INCAST} incast + $((SMALL_TOTAL - SMALL_CONNS_INCAST)) outcast）
-- 大流：
-  - Incast连接数: ${LARGE_CONNS_INCAST}（${LARGE_CONNS_INCAST}个源节点向节点0发送）
-  - Outcast连接数: ${LARGE_CONNS_OUTCAST}（每个源节点向${LARGE_CONNS_OUTCAST}-1=1个其他目标发送）
-  - 大流大小: 10MB (${LARGE_FLOWSIZE} bytes)
-  - 大流总连接数: ${LARGE_TOTAL}（${LARGE_CONNS_INCAST} incast + $((LARGE_TOTAL - LARGE_CONNS_INCAST)) outcast）
-- 总连接数: $((SMALL_TOTAL + LARGE_TOTAL))
-- 仿真结束时间: 30000000 us (30秒)
-- 队列大小: 15 packets
-- 队列类型: lossless_input
+Experiment Configuration:
+- Number of nodes: 54
+- Small flows:
+  - Incast connections: ${SMALL_CONNS_INCAST} (${SMALL_CONNS_INCAST} source nodes send to node 0)
+  - Outcast connections: ${SMALL_CONNS_OUTCAST} (each source sends to ${SMALL_CONNS_OUTCAST}-1=1 other targets)
+  - Small flow size: 100KB (${SMALL_FLOWSIZE} bytes)
+  - Small flow total connections: ${SMALL_TOTAL} (${SMALL_CONNS_INCAST} incast + $((SMALL_TOTAL - SMALL_CONNS_INCAST)) outcast)
+- Large flows:
+  - Incast connections: ${LARGE_CONNS_INCAST} (${LARGE_CONNS_INCAST} source nodes send to node 0)
+  - Outcast connections: ${LARGE_CONNS_OUTCAST} (each source sends to ${LARGE_CONNS_OUTCAST}-1=1 other targets)
+  - Large flow size: 10MB (${LARGE_FLOWSIZE} bytes)
+  - Large flow total connections: ${LARGE_TOTAL} (${LARGE_CONNS_INCAST} incast + $((LARGE_TOTAL - LARGE_CONNS_INCAST)) outcast)
+- Total connections: $((SMALL_TOTAL + LARGE_TOTAL))
+- Simulation end time: 30000000 us (30 seconds)
+- Queue size: 15 packets
+- Queue type: lossless_input
 
-混合Outcast-Incast流量特征：
-- 小流（100KB）：模拟短查询、小文件传输等
-- 大流（10MB）：模拟大数据传输、备份等
-- 同时包含Incast（多对一）和Outcast（一对多）模式
-- 测试混合工作负载下不同大小流量的拥塞控制效果
+Mixed Outcast-Incast Traffic Characteristics:
+- Small flows (100KB): Simulating short queries, small file transfers, etc.
+- Large flows (10MB): Simulating large data transfers, backups, etc.
+- Contains both Incast (many-to-one) and Outcast (one-to-many) patterns
+- Testing congestion control effectiveness under mixed workload with different flow sizes
 
-流量矩阵文件：
+Traffic Matrix Files:
 EOF
 
-for run in {1..5}; do
+for run in {1..3}; do
     echo "- mixed_outcast_incast_54_${SMALL_CONNS_INCAST}si_${SMALL_CONNS_OUTCAST}so_${LARGE_CONNS_INCAST}li_${LARGE_CONNS_OUTCAST}lo_run${run}.cm (seed=$((42+run)))" >> $SUMMARY_FILE
 done
 
 cat >> $SUMMARY_FILE << EOF
 
-实验结果文件结构：
-- MCC结果: mcc_mixed_outcast_incast_run<X>.dat (二进制日志)
-- MCC输出: mcc_mixed_outcast_incast_run<X>.txt (文本输出)
-- MCC分析: mcc_mixed_outcast_incast_run<X>_analysis.txt (分析结果)
-- HPCC结果: hpcc_mixed_outcast_incast_run<X>.dat (二进制日志)
-- HPCC输出: hpcc_mixed_outcast_incast_run<X>.txt (文本输出)
-- HPCC分析: hpcc_mixed_outcast_incast_run<X>_analysis.txt (分析结果)
+Experiment Result File Structure:
+- MCC results: mcc_mixed_outcast_incast_run<X>.dat (binary log)
+- MCC output: mcc_mixed_outcast_incast_run<X>.txt (text output)
+- MCC analysis: mcc_mixed_outcast_incast_run<X>_analysis.txt (analysis results)
+- HPCC results: hpcc_mixed_outcast_incast_run<X>.dat (binary log)
+- HPCC output: hpcc_mixed_outcast_incast_run<X>.txt (text output)
+- HPCC analysis: hpcc_mixed_outcast_incast_run<X>_analysis.txt (analysis results)
 
-其中：
-- X: 流量矩阵编号 (1-5)
+Where:
+- X: Traffic matrix number (1-3)
 
-总实验数: 5个流量矩阵 × 2个协议 = 10次实验
+Total experiments: 3 traffic matrices x 2 protocols = 6 experiments
 
-生成时间: $(date)
+Generated: $(date)
 EOF
 
 echo ""
-echo "实验总结已保存到: $SUMMARY_FILE"
+echo "Experiment summary saved to: $SUMMARY_FILE"
 echo ""
 echo "=========================================="
-echo "所有实验完成！"
+echo "All experiments completed!"
 echo "=========================================="
 echo ""
-echo "结果文件位置:"
-echo "  - 流量矩阵: connection_matrices/mixed_outcast_incast_experiments/"
-echo "  - 实验结果: Research_test/mixed_outcast_incast/"
-echo "  - 实验总结: Research_test/mixed_outcast_incast/experiment_summary.txt"
+echo "Result file locations:"
+echo "  - Traffic matrices: connection_matrices/mixed_outcast_incast_experiments/"
+echo "  - Experiment results: Research_10MB/mixed_outcast_incast/"
+echo "  - Experiment summary: Research_10MB/mixed_outcast_incast/experiment_summary.txt"
 echo ""
-

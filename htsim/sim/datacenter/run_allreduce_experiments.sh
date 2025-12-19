@@ -1,50 +1,50 @@
 #!/bin/bash
-# All-Reduce (AI Training)流量实验脚本
-# 功能：
-# 1. 创建必要的目录结构
-# 2. 生成5个All-Reduce流量矩阵文件（使用不同随机种子）
-# 3. 对每个cm文件，运行MCC和HPCC各一次
-# 4. 将结果保存到Research_test/allreduce文件夹
+# All-Reduce (AI Training) Traffic Experiment Script
+# Functions:
+# 1. Create necessary directory structure
+# 2. Generate 5 All-Reduce traffic matrix files (using different random seeds)
+# 3. Run MCC and HPCC once for each cm file
+# 4. Save results to Research_10MB/allreduce folder
 
-cd /Users/huangxucheng/Desktop/htsim2/htsim/sim/datacenter
+cd /Users/huangxucheng/Desktop/htsim_mcc/htsim/sim/datacenter
 
 # ==========================================
-# 1. 创建目录结构
+# 1. Create Directory Structure
 # ==========================================
 echo "=========================================="
-echo "创建目录结构"
+echo "Creating directory structure"
 echo "=========================================="
 
-# 创建实验结果目录
-mkdir -p Research_test/allreduce
-echo "✓ 创建目录: Research_test/allreduce"
+# Create experiment results directory
+mkdir -p Research_10MB/allreduce
+echo "Created directory: Research_10MB/allreduce"
 
-# 创建流量矩阵存储目录
+# Create traffic matrix storage directory
 mkdir -p connection_matrices/allreduce_experiments
-echo "✓ 创建目录: connection_matrices/allreduce_experiments"
+echo "Created directory: connection_matrices/allreduce_experiments"
 
 echo ""
 
 # ==========================================
-# 2. 生成All-Reduce流量矩阵文件（5个，使用不同随机种子）
+# 2. Generate All-Reduce Traffic Matrix Files (5 files with different random seeds)
 # ==========================================
 echo "=========================================="
-echo "生成All-Reduce流量矩阵文件"
+echo "Generating All-Reduce traffic matrix files"
 echo "=========================================="
 
 NODES=54
-GROUPSIZE=18      # 每组节点数（54节点可以分成3组，每组18节点）
-FLOWSIZE=1048576  # 1MB
-NUM_GROUPS=3      # 组数（54 / 18 = 3组）
+GROUPSIZE=18      # Nodes per group (54 nodes can be divided into 3 groups, 18 nodes each)
+FLOWSIZE=10485760  # 10MB
+NUM_GROUPS=3      # Number of groups (54 / 18 = 3 groups)
 RANDSEED=42
 
-# 生成5个不同的流量矩阵文件
-for i in {1..5}; do
-    SEED=$((42 + i))  # 使用不同的随机种子：43, 44, 45, 46, 47
+# Generate 3 different traffic matrix files
+for i in {1..3}; do
+    SEED=$((42 + i))  # Use different random seeds: 43, 44, 45
     
-    echo "生成 allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_1MB_run${i}.cm (seed=${SEED})..."
+    echo "Generating allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_10MB_run${i}.cm (seed=${SEED})..."
     python connection_matrices/gen_allreduce_ai_training.py \
-        connection_matrices/allreduce_experiments/allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_1MB_run${i}.cm \
+        connection_matrices/allreduce_experiments/allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_10MB_run${i}.cm \
         $NODES \
         $GROUPSIZE \
         $FLOWSIZE \
@@ -52,60 +52,61 @@ for i in {1..5}; do
         $SEED
     
     if [ $? -eq 0 ]; then
-        echo "  ✓ 成功生成 allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_1MB_run${i}.cm"
+        echo "  Successfully generated allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_10MB_run${i}.cm"
     else
-        echo "  ✗ 生成失败 allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_1MB_run${i}.cm"
+        echo "  Failed to generate allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_10MB_run${i}.cm"
         exit 1
     fi
 done
 
 echo ""
-echo "流量矩阵文件生成完成！"
+echo "Traffic matrix file generation completed!"
 echo ""
 
 # ==========================================
-# 3. 运行实验（对每个cm文件，运行MCC和HPCC各一次）
+# 3. Run Experiments (Run MCC and HPCC once for each cm file)
 # ==========================================
 echo "=========================================="
-echo "开始运行实验"
+echo "Starting experiments"
 echo "=========================================="
 echo ""
 
-# 实验参数
-END_TIME=5000000  # All-Reduce通常需要更长的仿真时间
+# Experiment parameters
+END_TIME=5000000  # All-Reduce typically needs longer simulation time
 MCC_ALPHA=0.5
 MCC_BETA=0.3
 QUEUE_SIZE=15
 QUEUE_TYPE="lossless_input"
 
-# 对每个流量矩阵文件运行实验
-for run in {1..5}; do
-    CM_FILE="connection_matrices/allreduce_experiments/allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_1MB_run${run}.cm"
+# Run experiments for each traffic matrix file
+for run in {1..3}; do
+    CM_FILE="connection_matrices/allreduce_experiments/allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_10MB_run${run}.cm"
     
     echo "----------------------------------------"
-    echo "处理流量矩阵: allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_1MB_run${run}.cm"
+    echo "Processing traffic matrix: allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_10MB_run${run}.cm"
     echo "----------------------------------------"
     
-    # 检查文件是否存在
+    # Check if file exists
     if [ ! -f "$CM_FILE" ]; then
-        echo "✗ 错误: 文件不存在 $CM_FILE"
+        echo "Error: File does not exist $CM_FILE"
         continue
     fi
     
-    # 对每个cm文件，运行MCC和HPCC各一次
+    # Run MCC and HPCC once for each cm file
     echo ""
     
     # ==========================================
-    # 运行MCC实验
+    # Run MCC Experiment
     # ==========================================
-    MCC_OUTPUT_DAT="Research_test/allreduce/mcc_allreduce_run${run}.dat"
-    MCC_OUTPUT_TXT="Research_test/allreduce/mcc_allreduce_run${run}.txt"
+    MCC_OUTPUT_DAT="Research_10MB/allreduce/mcc_allreduce_run${run}.dat"
+    MCC_OUTPUT_TXT="Research_10MB/allreduce/mcc_allreduce_run${run}.txt"
     
-    echo "  运行MCC..."
+    echo "  Running MCC..."
     ./htsim_mcc \
         -nodes 54 \
         -strat ecmp_host \
         -paths 1 \
+        -topo topologies/fat_tree_54.topo \
         -tm $CM_FILE \
         -end $END_TIME \
         -mcc_alpha $MCC_ALPHA \
@@ -118,27 +119,28 @@ for run in {1..5}; do
         > $MCC_OUTPUT_TXT 2>&1
     
     if [ $? -eq 0 ]; then
-        echo "    ✓ MCC运行完成"
+        echo "    MCC completed"
         
-        # 分析MCC结果
-        echo "   分析MCC结果..."
-        ./analyze_mcc_output.sh $MCC_OUTPUT_TXT > Research_test/allreduce/mcc_allreduce_run${run}_analysis.txt 2>&1
-        echo "    ✓ MCC分析完成"
+        # Analyze MCC results
+        echo "    Analyzing MCC results..."
+        ./analyze_mcc_output.sh $MCC_OUTPUT_TXT > Research_10MB/allreduce/mcc_allreduce_run${run}_analysis.txt 2>&1
+        echo "    MCC analysis completed"
     else
-        echo "    ✗ MCC运行失败，查看日志: $MCC_OUTPUT_TXT"
+        echo "    MCC failed, check log: $MCC_OUTPUT_TXT"
     fi
     
     # ==========================================
-    # 运行HPCC实验
+    # Run HPCC Experiment
     # ==========================================
-    HPCC_OUTPUT_DAT="Research_test/allreduce/hpcc_allreduce_run${run}.dat"
-    HPCC_OUTPUT_TXT="Research_test/allreduce/hpcc_allreduce_run${run}.txt"
+    HPCC_OUTPUT_DAT="Research_10MB/allreduce/hpcc_allreduce_run${run}.dat"
+    HPCC_OUTPUT_TXT="Research_10MB/allreduce/hpcc_allreduce_run${run}.txt"
     
-    echo "  运行HPCC++..."
+    echo "  Running HPCC++..."
     ./htsim_hpccplusplus \
         -nodes 54 \
         -strat ecmp_host \
         -paths 1 \
+        -topo topologies/fat_tree_54.topo \
         -tm $CM_FILE \
         -end $END_TIME \
         -q $QUEUE_SIZE \
@@ -149,81 +151,80 @@ for run in {1..5}; do
         > $HPCC_OUTPUT_TXT 2>&1
     
     if [ $? -eq 0 ]; then
-        echo "    ✓ HPCC++运行完成"
+        echo "    HPCC++ completed"
         
-        # 分析HPCC++结果
+        # Analyze HPCC++ results
         if [ -f "./analyze_hpccplusplus_output.sh" ]; then
-            echo "   分析HPCC++结果..."
-            ./analyze_hpccplusplus_output.sh $HPCC_OUTPUT_TXT > Research_test/allreduce/hpcc_allreduce_run${run}_analysis.txt 2>&1
-            echo "    ✓ HPCC++分析完成"
+            echo "    Analyzing HPCC++ results..."
+            ./analyze_hpccplusplus_output.sh $HPCC_OUTPUT_TXT > Research_10MB/allreduce/hpcc_allreduce_run${run}_analysis.txt 2>&1
+            echo "    HPCC++ analysis completed"
         fi
     else
-        echo "    ✗ HPCC++运行失败，查看日志: $HPCC_OUTPUT_TXT"
+        echo "    HPCC++ failed, check log: $HPCC_OUTPUT_TXT"
     fi
     
     echo ""
 done
 
 # ==========================================
-# 4. 生成实验总结
+# 4. Generate Experiment Summary
 # ==========================================
 echo "=========================================="
-echo "实验完成！生成总结报告"
+echo "Experiments completed! Generating summary report"
 echo "=========================================="
 
-SUMMARY_FILE="Research_test/allreduce/experiment_summary.txt"
+SUMMARY_FILE="Research_10MB/allreduce/experiment_summary.txt"
 
 cat > $SUMMARY_FILE << EOF
-All-Reduce (AI Training)流量实验总结
-====================================
+All-Reduce (AI Training) Traffic Experiment Summary
+====================================================
 
-实验配置：
-- 节点数: 54
-- 组大小: ${GROUPSIZE} 节点/组
-- 组数: ${NUM_GROUPS} 组
-- 流大小: 1MB (1048576 bytes)
-- 启动方式: 使用barrier触发器同步
-- 仿真结束时间: 5000000 us (5秒，All-Reduce需要更长的时间)
-- 队列大小: 15 packets
-- 队列类型: lossless_input
+Experiment Configuration:
+- Number of nodes: 54
+- Group size: ${GROUPSIZE} nodes/group
+- Number of groups: ${NUM_GROUPS} groups
+- Flow size: 10MB (10485760 bytes)
+- Start method: Synchronized using barrier triggers
+- Simulation end time: 5000000 us (5 seconds, All-Reduce needs longer time)
+- Queue size: 15 packets
+- Queue type: lossless_input
 
-流量矩阵文件：
+Traffic Matrix Files:
 EOF
 
-for run in {1..5}; do
-    echo "- allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_1MB_run${run}.cm (seed=$((42+run)))" >> $SUMMARY_FILE
+for run in {1..3}; do
+    echo "- allreduce_ai_54_${GROUPSIZE}g_${NUM_GROUPS}groups_10MB_run${run}.cm (seed=$((42+run)))" >> $SUMMARY_FILE
 done
 
 cat >> $SUMMARY_FILE << EOF
 
-实验结果文件结构：
-- MCC结果: mcc_allreduce_run<X>.dat (二进制日志)
-- MCC输出: mcc_allreduce_run<X>.txt (文本输出)
-- MCC分析: mcc_allreduce_run<X>_analysis.txt (分析结果)
-- HPCC结果: hpcc_allreduce_run<X>.dat (二进制日志)
-- HPCC输出: hpcc_allreduce_run<X>.txt (文本输出)
-- HPCC分析: hpcc_allreduce_run<X>_analysis.txt (分析结果)
+Experiment Result File Structure:
+- MCC results: mcc_allreduce_run<X>.dat (binary log)
+- MCC output: mcc_allreduce_run<X>.txt (text output)
+- MCC analysis: mcc_allreduce_run<X>_analysis.txt (analysis results)
+- HPCC results: hpcc_allreduce_run<X>.dat (binary log)
+- HPCC output: hpcc_allreduce_run<X>.txt (text output)
+- HPCC analysis: hpcc_allreduce_run<X>_analysis.txt (analysis results)
 
-其中：
-- X: 流量矩阵编号 (1-5)
+Where:
+- X: Traffic matrix number (1-3)
 
-总实验数: 5个流量矩阵 × 2个协议 = 10次实验
+Total experiments: 3 traffic matrices x 2 protocols = 6 experiments
 
-注意：All-Reduce使用barrier触发器实现同步，流量会分阶段完成。
+Note: All-Reduce uses barrier triggers for synchronization, flows complete in phases.
 
-生成时间: $(date)
+Generated: $(date)
 EOF
 
 echo ""
-echo "实验总结已保存到: $SUMMARY_FILE"
+echo "Experiment summary saved to: $SUMMARY_FILE"
 echo ""
 echo "=========================================="
-echo "所有实验完成！"
+echo "All experiments completed!"
 echo "=========================================="
 echo ""
-echo "结果文件位置:"
-echo "  - 流量矩阵: connection_matrices/allreduce_experiments/"
-echo "  - 实验结果: Research_test/allreduce/"
-echo "  - 实验总结: Research_test/allreduce/experiment_summary.txt"
+echo "Result file locations:"
+echo "  - Traffic matrices: connection_matrices/allreduce_experiments/"
+echo "  - Experiment results: Research_10MB/allreduce/"
+echo "  - Experiment summary: Research_10MB/allreduce/experiment_summary.txt"
 echo ""
-

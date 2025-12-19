@@ -1,0 +1,30 @@
+# Fat Tree topology for 54 nodes
+# Using K=6 fat tree structure (supports up to 54 nodes = (K/2)^2 * K)
+Nodes 54
+Tiers 3
+Podsize 9
+
+Tier 0
+Oversubscribed 1
+Downlink_speed_Gbps 100
+Radix_Down 3
+Radix_Up 3
+Downlink_Latency_ns 1000
+Switch_Latency_ns 300
+
+Tier 1
+Oversubscribed 1
+Downlink_speed_Gbps 100
+Radix_Down 3
+Radix_Up 3
+Downlink_Latency_ns 1000
+Switch_Latency_ns 300
+Bundle 1
+
+Tier 2
+Downlink_speed_Gbps 100
+Radix_Down 6
+Downlink_Latency_ns 1000
+Switch_Latency_ns 300
+Bundle 1
+
